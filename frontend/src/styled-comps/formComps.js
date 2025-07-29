@@ -38,14 +38,16 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
+  width: ${({ $width }) => ($width ? $width : undefined)};
   min-width: 300px;
   padding: 0.2rem 0.5rem;
-  border: ${(props) => (props.password ? "none" : "1px solid grey")};
+  border: ${(props) => (props.$pass ? "none" : "1px solid grey")};
   border-radius: 5px;
   outline: none;
 `;
 
 const PassDiv = styled.div`
+  background-color: white;
   display: flex;
   align-items: center;
   border: 1px solid grey;
