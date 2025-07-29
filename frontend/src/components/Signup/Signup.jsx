@@ -13,7 +13,11 @@ import {
   LinkP,
   StyledLink,
 } from "../../styled-comps/formComps";
+import { Image } from "../../styled-comps/commonComps";
+import { SERVER_URL } from "../../server";
 import styled from "styled-components";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const FlexDiv = styled.div`
   display: flex;
@@ -26,9 +30,10 @@ const FileInput = styled.input`
 `;
 
 const AvatarDiv = styled.div`
-  max-width: 40px;
-  border: ${(props) => (props.avatar ? "1px solid grey" : "")};
-  border-radius: ${(props) => (props.avatar ? "50%" : "")};
+  width: 40px;
+  height: 40px;
+  border: 1px solid grey;
+  border-radius: 50%;
 `;
 
 const StyledLabel = styled.label`
@@ -39,26 +44,40 @@ const StyledLabel = styled.label`
   border-radius: 5px;
 `;
 
-const Image = styled.img`
-  object-fit: cover;
-  border-radius: 50%;
-`;
-
 const Signup = () => {
   const [name, setName] = useState("");
-  const [avatar, setAvatar] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [avatar, setAvatar] = useState(null);
   const [visible, setVisible] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("TODO");
-  };
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     setAvatar(file);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const config = { headers: { "Content-Type": "multipart/form-data" } };
+
+    const newForm = new FormData();
+    newForm.append("file", avatar);
+    newForm.append("name", name);
+    newForm.append("email", email);
+    newForm.append("password", password);
+
+    axios
+      .post(`${SERVER_URL}/users`, newForm, config)
+      .then((res) => {
+        toast.success(res.data.message);
+        setName("");
+        setEmail("");
+        setPassword("");
+        setAvatar(null);
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      });
   };
 
   return (
@@ -70,6 +89,7 @@ const Signup = () => {
           <Input
             type="text"
             id="name"
+            name="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoComplete="name"
@@ -81,6 +101,7 @@ const Signup = () => {
           <Input
             type="email"
             id="email"
+            name="name"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
@@ -91,9 +112,10 @@ const Signup = () => {
           <Label htmlFor="password">Password</Label>
           <PassDiv>
             <Input
-              password
+              $pass
               type={visible ? "text" : "password"}
               id="password"
+              name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
@@ -116,15 +138,13 @@ const Signup = () => {
           </PassDiv>
         </InputDiv>
         <FlexDiv>
-          <Label htmlFor="avatar">
-            <AvatarDiv avatar={avatar}>
-              {avatar ? (
-                <Image src={URL.createObjectURL(avatar)} alt="avatar" />
-              ) : (
-                <RxAvatar size={30} />
-              )}
-            </AvatarDiv>
-          </Label>{" "}
+          <AvatarDiv>
+            {avatar ? (
+              <Image $rounded src={URL.createObjectURL(avatar)} alt="avatar" />
+            ) : (
+              <RxAvatar size={30} />
+            )}
+          </AvatarDiv>
           <StyledLabel htmlFor="file-input">
             <span>Upload photo</span>
             <FileInput

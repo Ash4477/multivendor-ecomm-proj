@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { SERVER_URL } from "../../server";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import {
   Container,
   H1,
@@ -25,16 +29,36 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    axios
+      .post(
+        `${SERVER_URL}/users/login-user`,
+        { email, password },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        toast.success("Login Successful");
+        navigate("/");
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      });
+  };
 
   return (
     <Container>
       <H1>Login to your account</H1>
-      <Form>
+      <Form onSubmit={handleSubmit}>
         <InputDiv>
           <Label htmlFor="email">Email</Label>
           <Input
             type="email"
             id="email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
@@ -45,9 +69,10 @@ const Login = () => {
           <Label htmlFor="password">Password</Label>
           <PassDiv>
             <Input
-              password
+              $pass
               type={visible ? "text" : "password"}
               id="password"
+              name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
