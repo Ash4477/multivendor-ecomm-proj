@@ -1,10 +1,12 @@
 import Header from "../components/Layout/Header/Header";
+import Hero from "../components/Route/Hero/Hero";
 
 const HomePage = () => {
   return (
-    <div>
+    <>
       <Header activeHeading={0} />
-    </div>
+      <Hero />
+    </>
   );
 };
 
