@@ -1,14 +1,16 @@
 :root {
   --color-1: #f7374f;
+  --color-1-dim: #f7596b;
   --color-2: #88304e;
   --color-3: #522546;
   --color-4: #2c2c2c;
+  --color-5: #676767;
 }
 
 body {
   font-family: "Raleway", sans-serif;
   background-color: var(--color-4);
-  height: 300vh;
+  color: white;
 }
 
 h1,
