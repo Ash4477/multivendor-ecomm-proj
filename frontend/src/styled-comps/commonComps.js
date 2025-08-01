@@ -3,8 +3,10 @@ import styled from "styled-components";
 const Image = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: ${({ $imgFill }) => ($imgFill ? "fill" : "contain")};
   display: block;
+
+  border-radius: ${({ $rounded }) => ($rounded ? "15px" : undefined)};
 `;
 
 const ImageDiv = styled.div`
