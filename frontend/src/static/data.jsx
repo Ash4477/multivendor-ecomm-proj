@@ -657,3 +657,66 @@ export const footerSupportLinks = [
     link: "/",
   },
 ];
+
+export const faqData = [
+  {
+    id: 1,
+    question: "How do I track my order?",
+    answer:
+      "Once your order has shipped, you will receive a confirmation email with a tracking number. You can use this number on our courier partner’s website to track your shipment in real-time.",
+  },
+  {
+    id: 2,
+    question: "What is your return policy?",
+    answer:
+      "You can return most items within 7 days of delivery for a full refund or exchange, provided they are unused and in original packaging. Some exclusions may apply.",
+  },
+  {
+    id: 3,
+    question: "Do you offer international shipping?",
+    answer:
+      "Yes, we ship internationally to many countries. Shipping fees and delivery times vary depending on the destination. All applicable duties and taxes are the responsibility of the customer.",
+  },
+  {
+    id: 4,
+    question: "Can I cancel or modify my order?",
+    answer:
+      "Orders can be canceled or modified within 1 hour of placing them. After that, the order is processed and sent for shipment, and cannot be changed.",
+  },
+  {
+    id: 5,
+    question: "What payment methods do you accept?",
+    answer:
+      "We accept Visa, Mastercard, American Express, PayPal, and Cash on Delivery (for select regions). All transactions are secure and encrypted.",
+  },
+  {
+    id: 6,
+    question: "How can I contact customer support?",
+    answer:
+      "You can reach our customer support team via the 'Contact Us' page, email us at support@example.com, or call us at 1-800-123-4567 during business hours.",
+  },
+  {
+    id: 7,
+    question: "Do you offer gift wrapping or personalized messages?",
+    answer:
+      "Yes, we offer gift wrapping and the option to include a personalized message during checkout for a small additional fee.",
+  },
+  {
+    id: 8,
+    question: "Why was my payment declined?",
+    answer:
+      "Payments may be declined for various reasons such as incorrect card details, insufficient funds, or security restrictions from your bank. Please check with your bank or try an alternate payment method.",
+  },
+  {
+    id: 9,
+    question: "How do I apply a discount code?",
+    answer:
+      "You can enter your discount code at the checkout page in the 'Promo Code' box. The discount will be applied before you complete your purchase.",
+  },
+  {
+    id: 10,
+    question: "What should I do if I receive a damaged or incorrect item?",
+    answer:
+      "If you receive a damaged or incorrect item, please contact our support team within 48 hours of delivery with your order number and a photo of the item. We'll arrange a replacement or refund as soon as possible.",
+  },
+];
