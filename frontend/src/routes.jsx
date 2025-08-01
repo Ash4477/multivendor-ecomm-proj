@@ -4,6 +4,10 @@ import SignupPage from "./pages/SignupPage";
 import ActivationPage from "./pages/ActivationPage";
 import HomePage from "./pages/HomePage";
 import Error from "./pages/ErrorPage";
+import ProductsPage from "./pages/ProductsPage";
+import BestSellingPage from "./pages/BestSellingPage";
+import EventsPage from "./pages/EventsPage";
+import FAQPage from "./pages/FAQPage";
 
 const routes = [
   {
@@ -15,6 +19,10 @@ const routes = [
       { path: "login", element: <LoginPage /> },
       { path: "sign-up", element: <SignupPage /> },
       { path: "activation/:activationToken", element: <ActivationPage /> },
+      { path: "products", element: <ProductsPage /> },
+      { path: "best-selling", element: <BestSellingPage /> },
+      { path: "events", element: <EventsPage /> },
+      { path: "faq", element: <FAQPage /> },
     ],
   },
 ];
