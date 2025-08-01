@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { AiOutlineHeart, AiOutlineShoppingCart } from "react-icons/ai";
-import { CgProfile } from "react-icons/cg";
 import NavBar from "./NavBar";
 import CategoriesDropDown from "./CategoriesDropDown";
+import { ImageDiv, Image } from "../../../styled-comps/commonComps";
+import { AiOutlineHeart, AiOutlineShoppingCart } from "react-icons/ai";
+import { CgProfile } from "react-icons/cg";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { BACKEND_URL } from "../../../server";
 
 const Container = styled.div`
   font-weight: 500;
@@ -56,15 +59,18 @@ const IconSpan = styled.span`
 
 const LowerPart = ({ activeHeading }) => {
   const [active, setActive] = useState(false);
+  const { isAuthenticated, user, loading } = useSelector((state) => state.user);
 
   useEffect(() => {
     const handleScroll = () => {
-      setActive(window.scrollY > 70);
+      setActive(window.scrollY > 90);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  if (loading) return <p>loading...</p>;
 
   return (
     <Container $active={active} className="lower">
@@ -72,16 +78,24 @@ const LowerPart = ({ activeHeading }) => {
       <NavBar activeHeading={activeHeading} />
       <ButtonsDiv>
         <IconLink to="">
-          <AiOutlineHeart size={45} />
+          <AiOutlineHeart size={50} />
           <IconSpan>0</IconSpan>
         </IconLink>
         <IconLink to="">
-          <AiOutlineShoppingCart size={45} />
+          <AiOutlineShoppingCart size={50} />
           <IconSpan>0</IconSpan>
         </IconLink>
-        <IconLink to="/login">
-          <CgProfile size={45} />
-        </IconLink>
+        {isAuthenticated ? (
+          <IconLink to="/profile">
+            <ImageDiv $width="30px" $rounded>
+              <Image src={`${BACKEND_URL}/${user.avatar}`} alt="avatar" />
+            </ImageDiv>
+          </IconLink>
+        ) : (
+          <IconLink to="/login">
+            <CgProfile size={50} />
+          </IconLink>
+        )}
       </ButtonsDiv>
     </Container>
   );
