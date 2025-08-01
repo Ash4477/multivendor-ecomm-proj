@@ -14,6 +14,7 @@ const Container = styled.div`
 `;
 
 const MainDiv = styled.div`
+  color: black;
   display: flex;
   flex-direction: column;
   width: 60%;
