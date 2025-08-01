@@ -7,6 +7,10 @@
   --color-5: #676767;
 }
 
+* {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: "Raleway", sans-serif;
   background-color: var(--color-4);
