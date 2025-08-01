@@ -43,6 +43,7 @@ const Login = () => {
       .then((res) => {
         toast.success("Login Successful");
         navigate("/");
+        window.location.reload();
       })
       .catch((err) => {
         toast.error(err.response.data.message);
