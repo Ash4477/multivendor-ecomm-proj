@@ -1,13 +1,15 @@
-import styled from "styled-components";
-import NavBar from "./NavBar";
-import CategoriesDropDown from "./CategoriesDropDown";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { ImageDiv, Image } from "../../../styled-comps/commonComps";
 import { AiOutlineHeart, AiOutlineShoppingCart } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { BACKEND_URL } from "../../../server";
+import styled from "styled-components";
+import NavBar from "./NavBar";
+import CategoriesDropDown from "./CategoriesDropDown";
+import Cart from "../LeftSidebar/Cart/Cart";
+import Wishlist from "../LeftSidebar/Wishlist/Wishlist";
 
 const Container = styled.div`
   font-weight: 500;
@@ -41,6 +43,11 @@ const IconLink = styled(Link)`
   position: relative;
 `;
 
+const IconDiv = styled.div`
+  position: relative;
+  cursor: pointer;
+`;
+
 const IconSpan = styled.span`
   display: flex;
   align-items: center;
@@ -59,6 +66,8 @@ const IconSpan = styled.span`
 
 const LowerPart = ({ activeHeading }) => {
   const [active, setActive] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const { isAuthenticated, user, loading } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -77,14 +86,14 @@ const LowerPart = ({ activeHeading }) => {
       <CategoriesDropDown></CategoriesDropDown>
       <NavBar activeHeading={activeHeading} />
       <ButtonsDiv>
-        <IconLink to="">
+        <IconDiv onClick={() => setIsWishlistOpen(true)}>
           <AiOutlineHeart size={50} />
           <IconSpan>0</IconSpan>
-        </IconLink>
-        <IconLink to="">
+        </IconDiv>
+        <IconDiv onClick={() => setIsCartOpen(true)}>
           <AiOutlineShoppingCart size={50} />
           <IconSpan>0</IconSpan>
-        </IconLink>
+        </IconDiv>
         {isAuthenticated ? (
           <IconLink to="/profile">
             <ImageDiv $width="30px" $rounded>
@@ -97,6 +106,11 @@ const LowerPart = ({ activeHeading }) => {
           </IconLink>
         )}
       </ButtonsDiv>
+
+      {isCartOpen ? <Cart setIsCartOpen={setIsCartOpen} /> : null}
+      {isWishlistOpen ? (
+        <Wishlist setIsWishlistOpen={setIsWishlistOpen} />
+      ) : null}
     </Container>
   );
 };
