@@ -31,23 +31,21 @@ const Login = () => {
   const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    axios
-      .post(
+    try {
+      await axios.post(
         `${SERVER_URL}/users/login-user`,
         { email, password },
         { withCredentials: true }
-      )
-      .then((res) => {
-        toast.success("Login Successful");
-        navigate("/");
-        window.location.reload();
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
+      );
+      toast.success("Login Successful");
+      navigate("/");
+      window.location.reload();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Login failed");
+    }
   };
 
   return (
