@@ -5,6 +5,7 @@ import ActivationPage from "./pages/ActivationPage";
 import HomePage from "./pages/HomePage";
 import Error from "./pages/ErrorPage";
 import ProductsPage from "./pages/ProductsPage";
+import ProductDetailsPage from "./pages/ProductDetailsPage";
 import BestSellingPage from "./pages/BestSellingPage";
 import EventsPage from "./pages/EventsPage";
 import FAQPage from "./pages/FAQPage";
@@ -20,6 +21,7 @@ const routes = [
       { path: "sign-up", element: <SignupPage /> },
       { path: "activation/:activationToken", element: <ActivationPage /> },
       { path: "products", element: <ProductsPage /> },
+      { path: "products/:name", element: <ProductDetailsPage /> },
       { path: "best-selling", element: <BestSellingPage /> },
       { path: "events", element: <EventsPage /> },
       { path: "faq", element: <FAQPage /> },
