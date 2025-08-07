@@ -16,4 +16,17 @@ const ImageDiv = styled.div`
   border-radius: ${({ $rounded }) => ($rounded ? "50%" : undefined)};
 `;
 
-export { Image, ImageDiv };
+const FancyButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  color: white;
+  font-family: Raleway, sans-serif;
+  font-size: 1.2rem;
+  padding: ${({ $pad }) => $pad || undefined};
+  border: none;
+  border-radius: 15px;
+`;
+
+export { Image, ImageDiv, FancyButton };

@@ -9,6 +9,7 @@ import ProductDetailsPage from "./pages/ProductDetailsPage";
 import BestSellingPage from "./pages/BestSellingPage";
 import EventsPage from "./pages/EventsPage";
 import FAQPage from "./pages/FAQPage";
+import ProfilePage from "./pages/ProfilePage";
 
 const routes = [
   {
@@ -25,6 +26,7 @@ const routes = [
       { path: "best-selling", element: <BestSellingPage /> },
       { path: "events", element: <EventsPage /> },
       { path: "faq", element: <FAQPage /> },
+      { path: "profile", element: <ProfilePage /> },
     ],
   },
 ];
