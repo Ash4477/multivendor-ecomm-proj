@@ -1,9 +1,12 @@
 import styled from "styled-components";
 import Header from "../components/Layout/Header/Header";
 import ProductCard from "../components/Route/ProductCard/ProductCard";
+import Loader from "../components/Layout/Loader/Loader";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { productData } from "../static/data";
+import { SERVER_URL } from "../server";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const H1 = styled.h1`
   min-height: 70vh;
@@ -23,22 +26,26 @@ const Content = styled.div`
 
 const ProductsPage = () => {
   const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchParams] = useSearchParams();
+  const categoryData = searchParams.get("category");
 
   useEffect(() => {
-    const categoryData = searchParams.get("category");
-    if (categoryData === null) {
-      const d =
-        productData && productData.sort((a, b) => a.total_sell - b.total_sell);
-      setData(d);
-    } else {
-      const d =
-        productData &&
-        productData.filter((data) => data.category === categoryData);
-      setData(d);
-    }
+    setIsLoading(true);
+    axios
+      .get(
+        `${SERVER_URL}/products${
+          categoryData ? `?category=${categoryData}` : ""
+        }`
+      )
+      .then((res) => setData(res.data.products))
+      .catch(() => toast.error("Server down"))
+      .finally(() => setIsLoading(false));
+
     window.scrollTo(0, 0);
-  }, [searchParams]);
+  }, [categoryData]);
+
+  if (isLoading) return <Loader />;
 
   return (
     <>
@@ -47,11 +54,18 @@ const ProductsPage = () => {
       {data && data.length === 0 ? (
         <H1>No Products Found</H1>
       ) : (
-        <Content>
-          {data.map((d, idx) => (
-            <ProductCard data={d} key={idx} />
-          ))}
-        </Content>
+        <>
+          <h1 style={{ paddingTop: "1rem", paddingLeft: "3rem" }}>
+            {categoryData
+              ? `Products in category: ${categoryData}`
+              : "All Products"}
+          </h1>
+          <Content>
+            {data.map((d, idx) => (
+              <ProductCard data={d} key={idx} />
+            ))}
+          </Content>
+        </>
       )}
     </>
   );
