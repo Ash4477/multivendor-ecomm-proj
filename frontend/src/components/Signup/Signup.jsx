@@ -18,6 +18,7 @@ import { SERVER_URL } from "../../server";
 import styled from "styled-components";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Loader from "../Layout/Loader/Loader";
 
 const FlexDiv = styled.div`
   display: flex;
@@ -50,6 +51,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [avatar, setAvatar] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
@@ -58,6 +60,7 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const config = { headers: { "Content-Type": "multipart/form-data" } };
 
     const newForm = new FormData();
@@ -77,7 +80,8 @@ const Signup = () => {
       })
       .catch((err) => {
         toast.error(err.response.data.message);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -156,7 +160,7 @@ const Signup = () => {
             />
           </StyledLabel>
         </FlexDiv>
-        <SubmitBtn type="submit">Submit</SubmitBtn>
+        <SubmitBtn type="submit">{isLoading ? <Loader /> : "Submit"}</SubmitBtn>
         <LinkP>
           Already have an account?{" "}
           <StyledLink to="/login">Login here</StyledLink>
