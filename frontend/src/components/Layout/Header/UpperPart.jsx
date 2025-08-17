@@ -129,7 +129,7 @@ const UpperPart = () => {
           </SearchBox>
         ) : null}
       </SearchDiv>
-      <SellerLink to="seller">
+      <SellerLink to="/shop-create">
         <p>Become a Seller</p> <IoIosArrowForward />
       </SellerLink>
     </Container>

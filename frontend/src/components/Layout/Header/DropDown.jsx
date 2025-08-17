@@ -4,9 +4,10 @@ import { Image, ImageDiv } from "../../../styled-comps/commonComps";
 
 const Container = styled.div`
   position: absolute;
-  top: 3rem;
-  left: 1rem;
+  top: 9rem;
+  left: 3rem;
   padding: 1rem;
+  max-width: 270px;
 
   display: flex;
   flex-direction: column;

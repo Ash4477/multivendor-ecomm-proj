@@ -69,6 +69,8 @@ const LowerPart = ({ activeHeading }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const { isAuthenticated, user, loading } = useSelector((state) => state.user);
+  const { cart } = useSelector((state) => state.cart);
+  const { wishlist } = useSelector((state) => state.wishlist);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -83,16 +85,16 @@ const LowerPart = ({ activeHeading }) => {
 
   return (
     <Container $active={active} className="lower">
-      <CategoriesDropDown></CategoriesDropDown>
+      <CategoriesDropDown />
       <NavBar activeHeading={activeHeading} />
       <ButtonsDiv>
         <IconDiv onClick={() => setIsWishlistOpen(true)}>
           <AiOutlineHeart size={50} />
-          <IconSpan>0</IconSpan>
+          <IconSpan>{wishlist && wishlist.length}</IconSpan>
         </IconDiv>
         <IconDiv onClick={() => setIsCartOpen(true)}>
           <AiOutlineShoppingCart size={50} />
-          <IconSpan>0</IconSpan>
+          <IconSpan>{cart && cart.length}</IconSpan>
         </IconDiv>
         {isAuthenticated ? (
           <IconLink to="/profile">
