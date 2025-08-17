@@ -3,12 +3,15 @@ import { RxPerson } from "react-icons/rx";
 import { MdOutlineTrackChanges } from "react-icons/md";
 import { TbAddressBook } from "react-icons/tb";
 import { HiOutlineReceiptRefund, HiOutlineShoppingBag } from "react-icons/hi";
-import styled from "styled-components";
 import {
   AiOutlineCreditCard,
   AiOutlineLogin,
   AiOutlineMessage,
 } from "react-icons/ai";
+import { toast } from "react-toastify";
+import { SERVER_URL } from "../../server";
+import styled from "styled-components";
+import axios from "axios";
 
 const Container = styled.ul`
   list-style-type: none;
@@ -71,13 +74,26 @@ const tabs = [
 const ProfileSidebar = ({ active, setActive }) => {
   const navigate = useNavigate();
 
+  const logoutHandler = () => {
+    axios
+      .post(`${SERVER_URL}/users/logout`, {}, { withCredentials: true })
+      .then((res) => {
+        toast.success(res.data.message);
+        window.location.reload();
+        navigate("/login");
+      })
+      .catch((err) => {
+        toast.error(err.response?.data?.message || "Logout failed");
+      });
+  };
+
   return (
     <Container>
       {tabs.map((tab) => (
         <ListItem
           key={tab.id}
           $active={active === tab.id}
-          onClick={() => setActive(tab.id)}
+          onClick={tab.id === 8 ? logoutHandler : () => setActive(tab.id)}
         >
           <p>{tab.tabName}</p>
           {tab.tabIcon}

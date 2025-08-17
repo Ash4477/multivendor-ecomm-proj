@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Image, ImageDiv } from "../../styled-comps/commonComps";
 import styled from "styled-components";
+import { BACKEND_URL } from "../../server";
 
 const Container = styled.div`
   margin-top: 2rem;
@@ -113,7 +114,7 @@ const ProductDetailsInfo = ({ data }) => {
             <FlexDiv>
               <ImageDiv $height="50px" $width="50px" $rounded>
                 <Image
-                  src={data.shop.shop_avatar.url}
+                  src={`${BACKEND_URL}/${data.shop.avatar}`}
                   alt={data.shop.name}
                   $rounded
                   $imgFill
@@ -121,14 +122,18 @@ const ProductDetailsInfo = ({ data }) => {
               </ImageDiv>
               <InnerDiv>
                 <h4>{data.shop.name}</h4>
-                <h4>({data.shop.ratings}) Ratings</h4>
+                <h5>
+                  {data.shop.ratings
+                    ? `(${data.shop.ratings}) Ratings`
+                    : "No Ratings Yet"}
+                </h5>
               </InnerDiv>
             </FlexDiv>
             <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Itaque
-              fuga optio libero qui odio possimus dolore explicabo officiis,
-              accusamus alias id dignissimos eius iusto. Eaque beatae ea
-              cupiditate quo facere.
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti
+              perspiciatis dignissimos dolore velit possimus incidunt atque iste
+              repudiandae officia illo. Commodi dolor soluta, ex similique nobis
+              maiores odit necessitatibus ...
             </p>
           </InnerDiv>
           <InnerDiv
@@ -141,7 +146,7 @@ const ProductDetailsInfo = ({ data }) => {
             }}
           >
             <p>
-              <b>Joined on:</b> 29 July, 2022
+              <b>Joined on:</b> {data.shop.createdAt.slice(0, 10)}
             </p>
             <p>
               <b>Total Products:</b> 1,221
@@ -149,7 +154,9 @@ const ProductDetailsInfo = ({ data }) => {
             <p>
               <b>Total Reviews:</b> 131
             </p>
-            <FancyButton onClick={() => navigate("/")}>Visit Shop</FancyButton>
+            <FancyButton onClick={() => navigate(`/shop/${data.shopId}`)}>
+              Visit Shop
+            </FancyButton>
           </InnerDiv>
         </FlexDiv>
       )}

@@ -9,6 +9,15 @@ import {
 import styled from "styled-components";
 import PriceDiv from "../Route/PriceDiv/PriceDiv";
 import ProductDetailsInfo from "./ProductDetailsInfo";
+import { BACKEND_URL } from "../../server";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { addToCart } from "../../redux/actions/cart";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../../redux/actions/wishlist";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   padding: 2rem 3rem;
@@ -90,17 +99,40 @@ const SubTitle2 = styled.h3`
 `;
 
 const ProductDetails = ({ data }) => {
-  const [isAddedToWishlist, setIsAddedToWishlist] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
+  const { cart } = useSelector((state) => state.cart);
+  const { wishlist } = useSelector((state) => state.wishlist);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (data?.images[0]) {
+      setSelectedImage(data.images[0]);
+    }
+  }, [data]);
+
+  const isInWishlist = wishlist.some((i) => i._id === data._id);
 
   const handleMessageSubmit = () => {};
 
-  useEffect(() => {
-    if (data?.image_Url?.[0]) {
-      setSelectedImage(data.image_Url[0]);
+  const addToCartHandler = (id, quantity) => {
+    const isItemExist = cart && cart.find((i) => i._id === id);
+    if (isItemExist) {
+      toast.info("Item already in cart");
+      return;
     }
-  }, [data]);
+    const cartData = { ...data, quantity };
+    dispatch(addToCart(cartData));
+    toast.success("Item added to cart successfully");
+  };
+
+  const removeFromWishlistHandler = () => {
+    dispatch(removeFromWishlist(data._id));
+  };
+
+  const addToWishlistHandler = () => {
+    dispatch(addToWishlist(data));
+  };
 
   if (!data)
     return (
@@ -116,12 +148,12 @@ const ProductDetails = ({ data }) => {
         <FlexColDiv style={{ flex: "1", gap: "1rem" }}>
           <ImageDiv $width="100%" $height="300px">
             <Image
-              src={selectedImage ? selectedImage.url : null}
+              src={`${BACKEND_URL}/uploads/${selectedImage}`}
               alt="product image"
             />
           </ImageDiv>
           <FlexDiv $justify="center">
-            {data.image_Url.map((img, idx) => (
+            {data.images.map((img, idx) => (
               <ImageDiv
                 key={idx}
                 $height="100px"
@@ -135,7 +167,7 @@ const ProductDetails = ({ data }) => {
                 onClick={() => setSelectedImage(img)}
               >
                 <Image
-                  src={img.url}
+                  src={`${BACKEND_URL}/uploads/${img}`}
                   alt="product image"
                   style={{ objectFit: "cover" }}
                 />
@@ -147,12 +179,12 @@ const ProductDetails = ({ data }) => {
           <h1>{data.name}</h1>
           <p>
             <BoldSpan>Description:</BoldSpan> <br />
-            {data.description}
+            {data.description.slice(0, 1000)} ... (full details below)
           </p>
           <PriceDiv
-            discount_price={data.discount_price}
-            price={data.price}
-            total_sell={data.total_sell}
+            discount_price={data.discountPrice}
+            price={data.originalPrice}
+            total_sell={data.sold_out}
             fontSize={"1.5rem"}
           />
           <FlexDiv $justify="space-between">
@@ -166,39 +198,56 @@ const ProductDetails = ({ data }) => {
               </CounterButton>
               <CounterView>{quantity}</CounterView>
               <CounterButton
-                onClick={() => setQuantity((prevCount) => prevCount + 1)}
+                onClick={() => {
+                  if (quantity < data.stock)
+                    setQuantity((prevCount) => prevCount + 1);
+                  else toast.info("Limited Stock");
+                }}
               >
                 +
               </CounterButton>
             </CounterDiv>
-            <Button onClick={() => setIsAddedToWishlist(!isAddedToWishlist)}>
-              {isAddedToWishlist ? (
+            <Button>
+              {isInWishlist ? (
                 <AiFillHeart
                   color="red"
                   size={30}
                   title="Remove from wishlist"
+                  onClick={removeFromWishlistHandler}
                 />
               ) : (
-                <AiOutlineHeart size={30} title="Add to wishlist" />
+                <AiOutlineHeart
+                  size={30}
+                  title="Add to wishlist"
+                  onClick={addToWishlistHandler}
+                />
               )}
             </Button>
           </FlexDiv>
           <FlexDiv $justify="space-between">
-            <FancyButton>
+            <FancyButton onClick={() => addToCartHandler(data._id, quantity)}>
               Add to Cart <AiOutlineShoppingCart size={20} />
             </FancyButton>
             <FlexDiv style={{ width: "max-content" }}>
-              <ImageDiv $height="50px" $width="50px" $rounded>
-                <Image
-                  src={data.shop.shop_avatar.url}
-                  alt={data.shop.name}
-                  $rounded
-                  $imgFill
-                />
-              </ImageDiv>
+              <Link to={`/shop/${data.shopId}`}>
+                <ImageDiv $height="50px" $width="50px" $rounded>
+                  <Image
+                    src={`${BACKEND_URL}/${data.shop.avatar}`}
+                    alt={data.shop.name}
+                    $rounded
+                    $imgFill
+                  />
+                </ImageDiv>
+              </Link>
               <FlexColDiv>
-                <SubTitle>{data.shop.name}</SubTitle>
-                <SubTitle2>({data.shop.ratings}) Ratings</SubTitle2>
+                <Link to={`/shop/${data.shopId}`}>
+                  <SubTitle>{data.shop.name}</SubTitle>{" "}
+                </Link>
+                {data.shop.ratings ? (
+                  <SubTitle2>({data.shop.ratings}) Ratings</SubTitle2>
+                ) : (
+                  <SubTitle2>No Ratings Yet</SubTitle2>
+                )}
               </FlexColDiv>
               <FancyButton onClick={handleMessageSubmit}>
                 Send Message <AiOutlineMessage size={20} />{" "}

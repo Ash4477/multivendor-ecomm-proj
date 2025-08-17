@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { productData } from "../../static/data";
 import ProductCard from "../Route/ProductCard/ProductCard";
 import styled from "styled-components";
+import axios from "axios";
+import { SERVER_URL } from "../../server";
+import { toast } from "react-toastify";
+import Loader from "../Layout/Loader/Loader";
 
 const Container = styled.div`
   padding: 1rem 3rem;
@@ -15,13 +18,20 @@ const StyledDiv = styled.div`
 
 const RelatedProducts = ({ category }) => {
   const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const productList =
-      productData && productData.filter((prod) => prod.category === category);
-
-    setProducts(productList);
+    setIsLoading(true);
+    axios
+      .get(`${SERVER_URL}/products?category=${category}`)
+      .then((res) => {
+        setProducts(res.data.products);
+      })
+      .catch(() => toast.error("Server is down"))
+      .finally(() => setIsLoading(false));
   }, [category]);
+
+  if (isLoading) return <Loader />;
 
   return (
     <Container>

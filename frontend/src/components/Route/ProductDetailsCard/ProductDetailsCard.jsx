@@ -9,6 +9,7 @@ import {
 import { ImageDiv, Image } from "../../../styled-comps/commonComps";
 import PriceDiv from "../../Route/PriceDiv/PriceDiv";
 import styled from "styled-components";
+import { BACKEND_URL } from "../../../server";
 
 const Container = styled.div`
   position: fixed;
@@ -120,9 +121,15 @@ const Button = styled.button`
   color: white;
 `;
 
-const ProductDetailsCard = ({ setOpen, data }) => {
+const ProductDetailsCard = ({
+  setOpen,
+  data,
+  addToCartHandler,
+  addToWishlistHandler,
+  removeFromWishlistHandler,
+  isInWishlist,
+}) => {
   const [count, setCount] = useState(1);
-  const [click, setClick] = useState(false);
 
   const handleMessageSubmit = () => {};
 
@@ -134,16 +141,19 @@ const ProductDetailsCard = ({ setOpen, data }) => {
           <FlexDiv style={{ marginBottom: "1rem" }}>
             {" "}
             <ImageDiv $width="50%" $height="50%" style={{ flex: "1" }}>
-              <Image src={data.image_Url[0].url} alt={data.name} />
+              <Image
+                src={`${BACKEND_URL}/uploads/${data.images[0]}`}
+                alt={data.name}
+              />
             </ImageDiv>
             <FlexDivCol style={{ flex: "2" }}>
               {" "}
               <Title>{data.name}</Title>
-              <p>{data.description}</p>
+              <p>{data.description.slice(0, 500)}</p>
               <PriceDiv
-                discount_price={data.discount_price}
-                price={data.price}
-                total_sell={data.total_sell}
+                discount_price={data.discountPrice}
+                price={data.originalPrice}
+                total_sell={data.sold_out}
               />
             </FlexDivCol>
           </FlexDiv>
@@ -152,7 +162,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
               <FlexDiv>
                 <ImageDiv $height="50px" $width="50px" $rounded>
                   <Image
-                    src={data.shop.shop_avatar.url}
+                    src={`${BACKEND_URL}/${data.shop.avatar}`}
                     alt={data.shop.name}
                     $rounded
                     $imgFill
@@ -160,7 +170,11 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                 </ImageDiv>
                 <FlexDivCol>
                   <SubTitle>{data.shop.name}</SubTitle>
-                  <SubTitle2>({data.shop.ratings}) Ratings</SubTitle2>
+                  <SubTitle2>
+                    {data.ratings
+                      ? `(${data.shop.ratings}) Ratings`
+                      : "Not Rated Yet"}
+                  </SubTitle2>
                 </FlexDivCol>
               </FlexDiv>
               <FancyButton onClick={handleMessageSubmit}>
@@ -184,19 +198,27 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                     +
                   </CounterButton>
                 </CounterDiv>
-                <Button onClick={() => setClick(!click)}>
-                  {click ? (
+                <Button>
+                  {isInWishlist ? (
                     <AiFillHeart
                       color="red"
                       size={30}
                       title="Remove from wishlist"
+                      onClick={removeFromWishlistHandler}
                     />
                   ) : (
-                    <AiOutlineHeart size={30} title="Add to wishlist" />
+                    <AiOutlineHeart
+                      size={30}
+                      title="Add to wishlist"
+                      onClick={addToWishlistHandler}
+                    />
                   )}
                 </Button>
               </FlexDiv>
-              <FancyButton style={{ alignSelf: "flex-end" }}>
+              <FancyButton
+                style={{ alignSelf: "flex-end" }}
+                onClick={() => addToCartHandler(data._id, count)}
+              >
                 Add to Cart <AiOutlineShoppingCart size={20} />
               </FancyButton>
             </FlexDivCol>

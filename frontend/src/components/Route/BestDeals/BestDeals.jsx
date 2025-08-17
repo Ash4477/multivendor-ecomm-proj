@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-import { productData } from "../../../static/data";
 import ProductCard from "../ProductCard/ProductCard";
 import styled from "styled-components";
 
@@ -16,16 +14,7 @@ const ItemsDiv = styled.div`
   gap: 1rem;
 `;
 
-const BestDeals = () => {
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    setData(
-      productData &&
-        productData.sort((a, b) => b.total_sell - a.total_sell).slice(0, 5)
-    );
-  }, []);
-
+const BestDeals = ({ data }) => {
   return (
     <Container>
       <h2>Best Deals</h2>

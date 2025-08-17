@@ -3,6 +3,7 @@ import { Image, ImageDiv } from "../../../styled-comps/commonComps";
 import PriceDiv from "../PriceDiv/PriceDiv";
 import Countdonwn from "./Countdown";
 import styled from "styled-components";
+import { BACKEND_URL, SERVER_URL } from "../../../server";
 
 const Container = styled.div`
   margin: 1rem 0;
@@ -31,30 +32,19 @@ const FancyButton = styled.button`
   border-radius: 5px;
 `;
 
-const EventCard = () => {
+const EventCard = ({ data }) => {
   return (
     <Container>
       <ImageDiv style={{ flex: "1" }}>
-        <Image
-          src="https://m.media-amazon.com/images/I/31Vle5fVdaL.jpg"
-          $rounded
-        />
+        <Image src={`${BACKEND_URL}/uploads/${data.images[0]}`} $rounded />
       </ImageDiv>
       <div style={{ flex: "2" }}>
-        <Title>Iphone 14 Pro Max 8/256gb</Title>
-        <p style={{ marginBottom: "1rem" }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea porro
-          eligendi necessitatibus error quod? Saepe quisquam nobis nisi maiores
-          similique maxime laboriosam aliquid quae accusantium est, eaque sit
-          quidem minus. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          Sapiente eum deserunt numquam, delectus rerum necessitatibus sequi
-          recusandae non, nobis porro id neque quas atque cumque temporibus? Quo
-          esse voluptate saepe!
-        </p>
+        <Title>{data.name}</Title>
+        <p style={{ marginBottom: "1rem" }}>{data.description}</p>
         <PriceDiv
-          discount_price={999}
-          price={1099}
-          total_sell={120}
+          discount_price={data.discountPrice}
+          price={data.originalPrice}
+          total_sell={data.sold_out}
           fontSize={"2rem"}
         />
         <Countdonwn />
@@ -65,7 +55,7 @@ const EventCard = () => {
             <FancyButton>See Details</FancyButton>
             <FancyButton>Buy Now </FancyButton>
           </FlexDiv>
-          <Link to="" style={{ fontWeight: "bold" }}>
+          <Link to="/events" style={{ fontWeight: "bold" }}>
             See More Events -&gt;
           </Link>
         </FlexDiv>

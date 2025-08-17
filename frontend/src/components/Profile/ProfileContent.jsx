@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Image, ImageDiv } from "../../styled-comps/commonComps";
 import {
@@ -9,7 +10,6 @@ import {
 import { AiOutlineCamera } from "react-icons/ai";
 import { BACKEND_URL } from "../../server";
 import styled from "styled-components";
-import { useState } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -55,29 +55,26 @@ const ProfileContent = () => {
     e.preventDefault();
   };
 
+  if (loading) return <p>Loading...</p>;
+
   return (
     <>
       <Container>
-        {!loading ? (
-          <CamDiv>
-            <ImageDiv
-              $width="150px"
-              $rounded
-              style={{
-                border: "3px solid var(--color-1)",
-              }}
-            >
-              <Image src={`${BACKEND_URL}/${user.avatar}`} alt="avatar" />
-            </ImageDiv>
-            <CamBtn>
-              <AiOutlineCamera size={20} />
-            </CamBtn>
-          </CamDiv>
-        ) : (
-          <div>
-            <p>Loading...</p>
-          </div>
-        )}
+        <CamDiv>
+          <ImageDiv
+            $width="150px"
+            $rounded
+            style={{
+              border: "3px solid var(--color-1)",
+            }}
+          >
+            <Image src={`${BACKEND_URL}/${user.avatar}`} alt="avatar" />
+          </ImageDiv>
+          <CamBtn>
+            <AiOutlineCamera size={20} />
+          </CamBtn>
+        </CamDiv>
+
         <Form onSubmit={handleUpdate}>
           <InputDiv>
             <Label htmlFor="f-name">Full Name</Label>

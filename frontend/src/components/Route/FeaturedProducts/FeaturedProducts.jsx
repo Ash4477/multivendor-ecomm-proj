@@ -1,4 +1,3 @@
-import { productData } from "../../../static/data";
 import ProductCard from "../ProductCard/ProductCard";
 import styled from "styled-components";
 
@@ -16,13 +15,13 @@ const ItemsDiv = styled.div`
   gap: 1rem;
 `;
 
-const FeaturedProducts = () => {
+const FeaturedProducts = ({ data }) => {
   return (
     <Container>
       <h2>Featured Products</h2>
       <ItemsDiv>
-        {productData.map((data, idx) => (
-          <ProductCard data={data} key={idx} />
+        {data.map((prod, idx) => (
+          <ProductCard data={prod} key={idx} />
         ))}
       </ItemsDiv>
     </Container>
