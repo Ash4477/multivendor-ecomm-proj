@@ -23,10 +23,10 @@ const FancyButton = styled.button`
   background-color: black;
   color: white;
   font-family: Raleway, sans-serif;
-  font-size: 1.2rem;
+  font-size: 1rem;
   padding: ${({ $pad }) => $pad || undefined};
   border: none;
-  border-radius: 15px;
+  border-radius: ${({ $bRad }) => $bRad || "15px"};
 `;
 
 export { Image, ImageDiv, FancyButton };

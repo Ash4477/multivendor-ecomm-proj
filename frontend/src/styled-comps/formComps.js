@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 const Container = styled.div`
+  padding: 3rem;
   background-color: var(--color-4);
   color: white;
   min-height: 100vh;
@@ -16,6 +17,7 @@ const H1 = styled.h1`
 `;
 
 const Form = styled.form`
+  min-width: ${({ $minWid }) => $minWid || undefined};
   background-color: white;
   color: black;
   padding: 1.5rem;
@@ -46,9 +48,28 @@ const Input = styled.input`
   outline: none;
 `;
 
+const Select = styled.select`
+  width: ${({ $width }) => ($width ? $width : undefined)};
+  min-width: 300px;
+  padding: 0.2rem 0.5rem;
+  border: "1px solid grey";
+  border-radius: 5px;
+  outline: none;
+`;
+
+const TextArea = styled.textarea`
+  width: ${({ $width }) => ($width ? $width : undefined)};
+  min-width: 300px;
+  padding: 0.2rem 0.5rem;
+  border: "1px solid grey";
+  border-radius: 5px;
+  outline: none;
+`;
+
 const PassDiv = styled.div`
   background-color: white;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   border: 1px solid grey;
   border-radius: 5px;
@@ -89,6 +110,8 @@ export {
   InputDiv,
   PassDiv,
   Input,
+  Select,
+  TextArea,
   Label,
   StyledLink,
   LinkP,
