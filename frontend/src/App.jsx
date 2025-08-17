@@ -1,20 +1,19 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loadUser } from "./redux/actions/user";
+import { loadShop } from "./redux/actions/shop";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from "./components/Layout/Footer/Footer";
 
 function App() {
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(loadUser());
+    dispatch(loadShop());
   }, [dispatch]);
-
-  if (loading) return <p>Loading...</p>;
 
   return (
     <>
