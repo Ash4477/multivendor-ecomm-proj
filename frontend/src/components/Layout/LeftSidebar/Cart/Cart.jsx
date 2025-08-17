@@ -1,35 +1,12 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { removeFromCart } from "../../../../redux/actions/cart";
 import { useNavigate } from "react-router-dom";
 import { RxCross1 } from "react-icons/rx";
 import { IoBagHandleOutline } from "react-icons/io5";
 import CartItem from "./CartItem";
 import LeftSidebar from "../LeftSidebar";
-
-const cartData = [
-  {
-    id: 1,
-    name: "Iphone 14 pro max 256gb ssd and 8gb ram silver color",
-    description: "test",
-    imageUrl: "https://m.media-amazon.com/images/I/31Vle5fVdaL.jpg",
-    price: 999,
-  },
-  {
-    id: 2,
-    name: "Iphone 14 pro max 256gb ssd and 8gb ram silver color",
-    description: "test",
-    imageUrl: "https://m.media-amazon.com/images/I/31Vle5fVdaL.jpg",
-
-    price: 245,
-  },
-  {
-    id: 3,
-    name: "Iphone 14 pro max 256gb ssd and 8gb ram silver color",
-    description: "test",
-    imageUrl: "https://m.media-amazon.com/images/I/31Vle5fVdaL.jpg",
-    price: 645,
-  },
-];
+import { useMemo } from "react";
 
 const CloseButton = styled.button`
   align-self: flex-end;
@@ -65,11 +42,20 @@ const CheckoutBtn = styled.button`
 `;
 
 const Cart = ({ setIsCartOpen }) => {
-  const [cart, setCart] = useState(cartData);
+  const { cart } = useSelector((state) => state.cart);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const deleteCartItem = (id) => {
-    setCart(cart.filter((data) => data.id != id));
+  const totalPrice = useMemo(() => {
+    if (!cart || cart.length === 0) return 0;
+    return cart.reduce(
+      (acc, item) => acc + item.discountPrice * item.quantity,
+      0
+    );
+  }, [cart]);
+
+  const removeFromCartHandler = (id) => {
+    dispatch(removeFromCart(id));
   };
 
   return (
@@ -78,25 +64,28 @@ const Cart = ({ setIsCartOpen }) => {
         <RxCross1 size={25} />
       </CloseButton>
       <FlexDiv>
-        <IoBagHandleOutline size={25} /> <h4>{cart.length} Items</h4>
+        <IoBagHandleOutline size={25} /> <h4>{cart && cart.length} Items</h4>
       </FlexDiv>
       {cart && cart.length > 0 ? (
         <CartList>
           {cart.map((data) => (
             <CartItem
-              key={data.id}
+              key={data._id}
               data={data}
-              handleDeleteItem={deleteCartItem}
+              handleDeleteItem={removeFromCartHandler}
             />
           ))}
         </CartList>
       ) : (
-        <h3 style={{ textAlign: "center" }}>
+        <h3 style={{ textAlign: "center", margin: "1rem 0" }}>
           🥺 <br /> No items added to cart yet!
         </h3>
       )}
-      <CheckoutBtn onClick={() => navigate("/checkout")}>
-        Checkout Now (USD $1080)
+      <CheckoutBtn
+        onClick={() => navigate("/checkout")}
+        disabled={!cart || cart.length === 0}
+      >
+        {`Checkout Now (USD $${totalPrice})`}
       </CheckoutBtn>
     </LeftSidebar>
   );

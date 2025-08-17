@@ -1,7 +1,9 @@
-import { useState } from "react";
 import { Image, ImageDiv } from "../../../../styled-comps/commonComps";
 import { AiOutlineDelete } from "react-icons/ai";
+import { BACKEND_URL } from "../../../../server";
 import styled from "styled-components";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../../../redux/actions/cart";
 
 const Container = styled.li`
   font-family: Roboto, sans-serif;
@@ -52,35 +54,43 @@ const PriceText = styled.span`
 `;
 
 const CartItem = ({ data, handleDeleteItem }) => {
-  const [quantity, setQuantity] = useState(1);
+  const dispatch = useDispatch();
 
-  const increaseQuantity = () =>
-    setQuantity((prevQuantity) => prevQuantity + 1);
+  const increaseQuantity = () => {
+    const updatedCartItem = { ...data, quantity: data.quantity + 1 };
+    dispatch(addToCart(updatedCartItem));
+  };
 
   const decreaseQuantity = () => {
-    if (quantity > 1) setQuantity((prevQuantity) => prevQuantity - 1);
+    if (data.quantity > 1) {
+      const updatedCartItem = { ...data, quantity: data.quantity - 1 };
+      dispatch(addToCart(updatedCartItem));
+    }
   };
 
   return (
     <Container>
       <FlexColDiv>
         <CounterBtn onClick={increaseQuantity}>+</CounterBtn>
-        <span>{quantity}</span>
-        <CounterBtn $deactivate={quantity <= 1} onClick={decreaseQuantity}>
+        <span>{data.quantity}</span>
+        <CounterBtn $deactivate={data.quantity <= 1} onClick={decreaseQuantity}>
           -
         </CounterBtn>
       </FlexColDiv>
       <ImageDiv $width="50px" $height="50px">
-        <Image src={data.imageUrl} alt="product image" />
+        <Image
+          src={`${BACKEND_URL}/uploads/${data.images[0]}`}
+          alt="product image"
+        />
       </ImageDiv>
       <FlexColDiv $at="start" $gap="0.1rem">
         <p>{data.name}</p>
         <TextSpan>
-          ( $ {data.price} x {quantity} )
+          ( $ {data.discountPrice} x {data.quantity} )
         </TextSpan>
-        <PriceText>US ${data.price * quantity}</PriceText>
+        <PriceText>US ${data.discountPrice * data.quantity}</PriceText>
       </FlexColDiv>
-      <DeleteBtn onClick={() => handleDeleteItem(data.id)}>
+      <DeleteBtn onClick={() => handleDeleteItem(data._id)}>
         <AiOutlineDelete size={25} />
       </DeleteBtn>
     </Container>
