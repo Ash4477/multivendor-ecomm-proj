@@ -36,7 +36,7 @@ const Login = () => {
 
     try {
       await axios.post(
-        `${SERVER_URL}/users/login-user`,
+        `${SERVER_URL}/users/login`,
         { email, password },
         { withCredentials: true }
       );
