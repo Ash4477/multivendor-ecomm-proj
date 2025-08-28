@@ -7,6 +7,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { IoIosArrowForward } from "react-icons/io";
 import logoImg from "../../../assets/images/logo.png";
 import { productData } from "../../../static/data";
+import { useSelector } from "react-redux";
 
 const Container = styled.div`
   background-color: var(--color-2);
@@ -70,12 +71,13 @@ const SellerLink = styled(Link)`
   background-color: black;
   color: white;
   font-family: Raleway, sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   padding: 0.7rem 1rem;
   border-radius: 15px;
 `;
 
 const UpperPart = () => {
+  const { isAuthenticated } = useSelector((state) => state.shop);
   const [searchText, setSearchText] = useState("");
   const [searchData, setSearchData] = useState(null);
 
@@ -129,8 +131,9 @@ const UpperPart = () => {
           </SearchBox>
         ) : null}
       </SearchDiv>
-      <SellerLink to="/shop-create">
-        <p>Become a Seller</p> <IoIosArrowForward />
+      <SellerLink to={isAuthenticated ? "/dashboard" : "/shop-create"}>
+        {isAuthenticated ? <p>Go to Shop Dashboard</p> : <p>Become a Seller</p>}{" "}
+        <IoIosArrowForward />
       </SellerLink>
     </Container>
   );
