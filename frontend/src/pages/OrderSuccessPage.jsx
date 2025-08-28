@@ -1,9 +1,10 @@
+import Header from "../components/Layout/Header/Header";
 import Lottie from "react-lottie";
-import animationData from "../assets/animations/error-404.json";
+import animationData from "../assets/animations/order-completed.json";
 
-const ErrorPage = () => {
+const OrderSuccessPage = () => {
   const defaultOptions = {
-    loop: true,
+    loop: false,
     autoplay: true,
     animationData: animationData,
     rendererSettings: {
@@ -12,19 +13,17 @@ const ErrorPage = () => {
   };
   return (
     <>
+      <Header />
       <div
         style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "white",
-          height: "100vh",
-          width: "100vw",
         }}
       >
         <Lottie options={defaultOptions} width={300} height={300} />
-        <h1 style={{ color: "black" }}>This page doesn't exist 😥</h1>
+        <h1 style={{}}>Your order is successful 😍</h1>
         <br />
         <br />
       </div>
@@ -32,4 +31,4 @@ const ErrorPage = () => {
   );
 };
 
-export default ErrorPage;
+export default OrderSuccessPage;

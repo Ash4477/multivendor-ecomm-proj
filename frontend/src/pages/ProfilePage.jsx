@@ -2,11 +2,15 @@ import Header from "../components/Layout/Header/Header";
 import ProfileSidebar from "../components/Profile/ProfileSidebar";
 import ProfileContent from "../components/Profile/ProfileContent";
 import OrdersContent from "../components/Profile/OrdersContent";
+import RefundsContent from "../components/Profile/RefundsContent";
 import TrackOrderContent from "../components/Profile/TrackOrderContent";
-import PaymentMethodsContent from "../components/Profile/PaymentMethodsContent";
 import UserAddressContent from "../components/Profile/UserAddressContent";
+import ChangePasswordContent from "../components/Profile/ChangePasswordContent";
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { clearErrors, clearSuccessMessage } from "../redux/actions/user";
 
 const Container = styled.div`
   padding: 2rem 3rem;
@@ -20,6 +24,19 @@ const MainDiv = styled.div`
 
 const ProfilePage = () => {
   const [active, setActive] = useState(1);
+  const { error, successMessage } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearErrors());
+    }
+    if (successMessage) {
+      toast.success(successMessage);
+      dispatch(clearSuccessMessage());
+    }
+  }, [error, successMessage, dispatch]);
 
   return (
     <>
@@ -40,7 +57,7 @@ const ProfilePage = () => {
         )}
         {active === 3 && (
           <MainDiv>
-            <OrdersContent />
+            <RefundsContent />
           </MainDiv>
         )}
         {/* active === 4 => INBOX LATER */}
@@ -51,7 +68,7 @@ const ProfilePage = () => {
         )}
         {active === 6 && (
           <MainDiv>
-            <PaymentMethodsContent />
+            <ChangePasswordContent />
           </MainDiv>
         )}
         {active === 7 && (

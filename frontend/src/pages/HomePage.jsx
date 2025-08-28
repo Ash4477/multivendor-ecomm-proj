@@ -20,7 +20,7 @@ const HomePage = () => {
     axios
       .get(`${SERVER_URL}/products`)
       .then((res) => setData(res.data.products))
-      .catch(() => toast.error("Server down"))
+      .catch((err) => toast.error(err.response?.data?.message || "Server down"))
       .finally(() => setIsLoading(false));
   }, []);
 
