@@ -5,14 +5,18 @@ import jwt from "jsonwebtoken";
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: [true, "Please enter your name!"] },
-    email: { type: String, required: [true, "Please enter your email!"] },
+    email: {
+      type: String,
+      required: [true, "Please enter your email!"],
+      unique: true,
+    },
     password: {
       type: String,
       required: [true, "Please enter your password!"],
       minLength: [4, "Password should be greater than 4 characters"],
       select: false,
     },
-    phoneNumber: { type: Number },
+    phoneNumber: { type: String },
     addresses: [
       {
         country: {
@@ -56,7 +60,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
-    next();
+    return next();
   }
   this.password = await bcrypt.hash(this.password, 10);
 });

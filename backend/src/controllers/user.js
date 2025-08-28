@@ -5,10 +5,10 @@ import jwt from "jsonwebtoken";
 import upload from "../multer.js";
 import User from "../models/user.js";
 import sendMail from "../utils/sendMail.js";
-import sendToken from "../utils/jwtToken.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
-import isAuthenticated from "../middlewares/auth.js";
+import { sendUserToken } from "../utils/jwtToken.js";
+import { isUserAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -25,7 +25,10 @@ router.post("/", upload.single("file"), async (req, res, next) => {
     const filename = req.file.filename;
     const filePath = path.join("uploads", filename);
     fs.unlink(filePath, (err) => {
-      if (err) console.error("Error deleting file:", err);
+      if (err) {
+        console.error("Error deleting file:", err);
+        return res.status(500).json({ message: "error deleting file" });
+      }
     });
 
     return next(new ErrorHandler("user already exists", 400));
@@ -87,7 +90,7 @@ router.post(
         password,
       });
 
-      sendToken(user, 201, res);
+      sendUserToken(user, 201, res);
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
@@ -95,7 +98,7 @@ router.post(
 );
 
 router.post(
-  "/login-user",
+  "/login",
   catchAsyncErrors(async (req, res, next) => {
     try {
       const { email, password } = req.body;
@@ -109,7 +112,24 @@ router.post(
       if (!isPasswordValid)
         return next(new ErrorHandler("Invalid Password", 400));
 
-      sendToken(user, 201, res);
+      sendUserToken(user, 201, res);
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+router.post(
+  "/logout",
+  isUserAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      res.cookie("token", null, {
+        expiresIn: new Date(Date.now()),
+        httpOnly: true,
+      });
+
+      res.status(201).json({ success: true, message: "Log out successfull!" });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
@@ -118,7 +138,7 @@ router.post(
 
 router.get(
   "/",
-  isAuthenticated,
+  isUserAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
     try {
       const user = await User.findById(req.user.id);
@@ -128,6 +148,125 @@ router.get(
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
+  })
+);
+
+router.put(
+  "/",
+  isUserAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    const { email, password, phoneNumber, name } = req.body;
+    console.log(req.body);
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) {
+      return next(new ErrorHandler("No user found", 400));
+    }
+
+    const isPasswordValid = await user.comparePassword(password);
+
+    if (!isPasswordValid) {
+      return next(new ErrorHandler("Invalid Password", 400));
+    }
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+
+    await user.save();
+
+    res.status(201).json({ success: true, user });
+  })
+);
+
+router.put(
+  "/update-avatar",
+  isUserAuthenticated,
+  upload.single("image"),
+  catchAsyncErrors(async (req, res, next) => {
+    const existUser = await User.findById(req.user.id);
+    const existAvatarPath = existUser.avatar;
+    fs.unlinkSync(existAvatarPath);
+    const fileUrl = path.join("uploads", req.file.filename);
+    const user = await User.findByIdAndUpdate(req.user.id, { avatar: fileUrl });
+    res.status(201).json({ success: true, user });
+  })
+);
+
+router.put(
+  "/update-addresses",
+  isUserAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    const user = await User.findById(req.user.id);
+    const sameTypeAddress = user.addresses.find(
+      (address) => address.addressType === req.body.addressType
+    );
+
+    if (sameTypeAddress) {
+      return next(
+        new ErrorHandler(
+          `${req.body.addressType} type address already exists`,
+          400
+        )
+      );
+    }
+
+    const existAddress = user.addresses.find((add) => add._id === req.body._id);
+    if (existAddress) {
+      Object.assign(existAddress, req.body);
+    } else {
+      user.addresses.push(req.body);
+    }
+
+    await user.save();
+
+    res.status(201).json({ success: true, user });
+  })
+);
+
+router.put(
+  "/delete-address/:id",
+  isUserAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    const userId = req.body.userId;
+    const addressId = req.params.id;
+
+    await User.updateOne(
+      { _id: userId },
+      { $pull: { addresses: { _id: addressId } } }
+    );
+
+    const user = await User.findById(userId);
+
+    res.status(201).json({ success: true, user });
+  })
+);
+
+router.put(
+  "/change-password",
+  isUserAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    const { oldPassword, newPassword } = req.body;
+    const user = await User.findById(req.user._id).select("+password");
+    const isOldPasswordValid = await user.comparePassword(oldPassword);
+    if (!isOldPasswordValid) {
+      return next(new ErrorHandler("Incorrect Old Password!", 400));
+    }
+    user.password = newPassword;
+    await user.save();
+    res
+      .status(200)
+      .json({ success: true, message: "Password Updated Successfully" });
+  })
+);
+
+router.get(
+  "/:id",
+  catchAsyncErrors(async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+    if (!user) next(new ErrorHandler("No user found with this id", 400));
+
+    res.status(200).json({ success: true, user });
   })
 );
 
