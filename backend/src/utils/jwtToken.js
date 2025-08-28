@@ -1,4 +1,4 @@
-const sendToken = (user, statusCode, res) => {
+const sendUserToken = (user, statusCode, res) => {
   const token = user.getJwtToken();
   const options = {
     expires: new Date(Date.now() + 90 * 24 * 60 * 1000),
@@ -12,4 +12,18 @@ const sendToken = (user, statusCode, res) => {
   });
 };
 
-export default sendToken;
+const sendShopToken = (shop, statusCode, res) => {
+  const token = shop.getJwtToken();
+  const options = {
+    expires: new Date(Date.now() + 90 * 24 * 60 * 1000),
+    httpOnly: true,
+  };
+
+  res.status(statusCode).cookie("shop_token", token, options).json({
+    success: true,
+    shop,
+    token,
+  });
+};
+
+export { sendUserToken, sendShopToken };
