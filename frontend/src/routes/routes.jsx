@@ -8,9 +8,11 @@ import ProductsPage from "../pages/ProductsPage";
 import ProductDetailsPage from "../pages/ProductDetailsPage";
 import BestSellingPage from "../pages/BestSellingPage";
 import EventsPage from "../pages/EventsPage";
+import EventDetailsPage from "../pages/EventDetailsPage";
 import FAQPage from "../pages/FAQPage";
 import ProfilePage from "../pages/ProfilePage";
 import CheckoutPage from "../pages/CheckoutPage";
+import PaymentPage from "../pages/PaymentPage";
 import ProtectedUserRoute from "./ProtectedUserRoute";
 import ProtectedShopRoute from "./ProtectedShopRoute";
 import ShopCreatePage from "../pages/ShopCreatePage";
@@ -23,6 +25,20 @@ import AllProducts from "../components/Shop/AllProducts";
 import CreateEvent from "../components/Shop/CreateEvent";
 import AllEvents from "../components/Shop/AllEvents";
 import AllCoupons from "../components/Shop/AllCoupons";
+import Refunds from "../components/Shop/Refunds";
+import OrderSuccessPage from "../pages/OrderSuccessPage";
+import AllOrders from "../components/Shop/AllOrders";
+import ShopOrderDetailsPage from "../pages/ShopOrderDetailsPage";
+import UserOrderDetailsPage from "../pages/UserOrderDetailsPage";
+import RefundDetailsPage from "../pages/RefundDetailsPage";
+import TrackOrderPage from "../pages/TrackOrderPage";
+import Dashboard from "../components/Shop/Dashboard";
+import ShopSettingsPage from "../pages/ShopSettingsPage";
+import Withdraw from "../components/Shop/Withdraw";
+import Inbox from "../components/Shop/Inbox/Inbox";
+import UserInboxPage from "../pages/UserInboxPage";
+import UserChat from "../components/UserInbox/UserChat";
+import UserInbox from "../components/UserInbox/UserInbox";
 
 const routes = [
   {
@@ -42,6 +58,7 @@ const routes = [
       { path: "products/:id", element: <ProductDetailsPage /> },
       { path: "best-selling", element: <BestSellingPage /> },
       { path: "events", element: <EventsPage /> },
+      { path: "events/:id", element: <EventDetailsPage /> },
       { path: "faq", element: <FAQPage /> },
       {
         path: "profile",
@@ -59,6 +76,15 @@ const routes = [
           </ProtectedUserRoute>
         ),
       },
+      {
+        path: "payment",
+        element: (
+          <ProtectedUserRoute>
+            <PaymentPage />
+          </ProtectedUserRoute>
+        ),
+      },
+      { path: "order-success", element: <OrderSuccessPage /> },
       { path: "shop-create", element: <ShopCreatePage /> },
       { path: "shop-login", element: <ShopLoginPage /> },
       {
@@ -73,17 +99,74 @@ const routes = [
           </ProtectedShopRoute>
         ),
         children: [
-          { index: true, element: <h1>TODO</h1> },
-          { path: "all-orders", element: <h1>TODO</h1> },
+          { index: true, element: <Dashboard /> },
+          { path: "all-orders", element: <AllOrders /> },
           { path: "all-products", element: <AllProducts /> },
           { path: "create-product", element: <ShopCreateProduct /> },
           { path: "all-events", element: <AllEvents /> },
           { path: "create-event", element: <CreateEvent /> },
-          { path: "withdraw", element: <h1>TODO</h1> },
-          { path: "inbox", element: <h1>TODO</h1> },
+          { path: "withdraw", element: <Withdraw /> },
+          { path: "inbox", element: <Inbox /> },
           { path: "coupons", element: <AllCoupons /> },
-          { path: "refunds", element: <h1>TODO</h1> },
-          { path: "settings", element: <h1>TODO</h1> },
+          { path: "refunds", element: <Refunds /> },
+        ],
+      },
+      {
+        path: "shop/refund/:id",
+        element: (
+          <ProtectedUserRoute>
+            <RefundDetailsPage />
+          </ProtectedUserRoute>
+        ),
+      },
+      {
+        path: "shop/order/:id",
+        element: (
+          <ProtectedShopRoute>
+            <ShopOrderDetailsPage />
+          </ProtectedShopRoute>
+        ),
+      },
+      {
+        path: "user/order/:id",
+        element: (
+          <ProtectedUserRoute>
+            <UserOrderDetailsPage />
+          </ProtectedUserRoute>
+        ),
+      },
+      {
+        path: "user/track/order/:id",
+        element: (
+          <ProtectedUserRoute>
+            <TrackOrderPage />
+          </ProtectedUserRoute>
+        ),
+      },
+      {
+        path: "settings",
+        element: (
+          <ProtectedShopRoute>
+            <ShopSettingsPage />
+          </ProtectedShopRoute>
+        ),
+      },
+      {
+        path: "user/inbox",
+        element: (
+          <ProtectedUserRoute>
+            <UserInboxPage />
+          </ProtectedUserRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <UserInbox />,
+          },
+          {
+            path: ":id",
+            element: <UserChat />,
+          },
         ],
       },
     ],

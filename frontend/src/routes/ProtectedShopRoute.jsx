@@ -1,14 +1,17 @@
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import Loader from "../components/Layout/Loader/Loader";
+import AnimationLoader from "../components/Layout/Loader/AnimationLoader";
 
 const ProtectedShopRoute = ({ children }) => {
   const { isAuthenticated, loading } = useSelector((state) => state.shop);
 
-  if (loading) return <Loader />;
+  if (loading) {
+    return <AnimationLoader />;
+  }
 
-  if (!isAuthenticated && !loading)
+  if (!isAuthenticated) {
     return <Navigate to="/shop-login" replace />;
+  }
 
   return children;
 };
