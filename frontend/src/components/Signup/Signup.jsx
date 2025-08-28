@@ -33,8 +33,10 @@ const FileInput = styled.input`
 const AvatarDiv = styled.div`
   width: 40px;
   height: 40px;
-  border: 1px solid grey;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const StyledLabel = styled.label`
@@ -160,7 +162,9 @@ const Signup = () => {
             />
           </StyledLabel>
         </FlexDiv>
-        <SubmitBtn type="submit">{isLoading ? <Loader /> : "Submit"}</SubmitBtn>
+        <SubmitBtn type="submit" disabled={isLoading}>
+          {isLoading ? <Loader width="25px" /> : "Submit"}
+        </SubmitBtn>
         <LinkP>
           Already have an account?{" "}
           <StyledLink to="/login">Login here</StyledLink>

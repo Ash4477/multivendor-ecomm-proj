@@ -16,6 +16,7 @@ import {
   LinkP,
   StyledLink,
 } from "../../../styled-comps/formComps";
+import Loader from "../../Layout/Loader/Loader";
 
 const CheckDiv = styled.div`
   display: flex;
@@ -28,10 +29,11 @@ const ShopLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     try {
       await axios.post(
         `${SERVER_URL}/shops/login`,
@@ -43,6 +45,7 @@ const ShopLogin = () => {
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");
     }
+    setIsLoading(false);
   };
 
   return (
@@ -99,7 +102,9 @@ const ShopLogin = () => {
           </span>
           <StyledLink to="/">Forgot your password?</StyledLink>
         </CheckDiv>
-        <SubmitBtn type="submit">Submit</SubmitBtn>
+        <SubmitBtn type="submit">
+          {isLoading ? <Loader width="25px" /> : "Submit"}
+        </SubmitBtn>
         <LinkP>
           Don't have an account yet?{" "}
           <StyledLink to="/shop-create">Sign up here!</StyledLink>

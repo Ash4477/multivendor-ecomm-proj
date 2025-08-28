@@ -18,6 +18,7 @@ import { SERVER_URL } from "../../../server";
 import styled from "styled-components";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Loader from "../../Layout/Loader/Loader";
 
 const FlexDiv = styled.div`
   display: flex;
@@ -52,6 +53,7 @@ const ShopCreate = () => {
   const [password, setPassword] = useState("");
   const [avatar, setAvatar] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
@@ -71,6 +73,7 @@ const ShopCreate = () => {
     newForm.append("phoneNumber", phoneNumber);
     newForm.append("password", password);
 
+    setIsLoading(true);
     axios
       .post(`${SERVER_URL}/shops`, newForm, config)
       .then((res) => {
@@ -85,7 +88,8 @@ const ShopCreate = () => {
       })
       .catch((err) => {
         toast.error(err.response.data.message);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -200,7 +204,9 @@ const ShopCreate = () => {
             />
           </StyledLabel>
         </FlexDiv>
-        <SubmitBtn type="submit">Submit</SubmitBtn>
+        <SubmitBtn type="submit">
+          {isLoading ? <Loader width="25px" /> : "Submit"}
+        </SubmitBtn>
         <LinkP>
           Already have a seller account?{" "}
           <StyledLink to="/shop-login">Login here</StyledLink>

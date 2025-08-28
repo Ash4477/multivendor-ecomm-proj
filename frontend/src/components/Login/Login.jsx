@@ -106,7 +106,9 @@ const Login = () => {
           </span>
           <StyledLink to="/">Forgot your password?</StyledLink>
         </CheckDiv>
-        <SubmitBtn type="submit">{isLoading ? <Loader /> : "Submit"}</SubmitBtn>
+        <SubmitBtn type="submit" disabled={isLoading}>
+          {isLoading ? <Loader width="25px" /> : "Submit"}
+        </SubmitBtn>
         <LinkP>
           Don't have an account yet?{" "}
           <StyledLink to="/sign-up">Sign up here!</StyledLink>
