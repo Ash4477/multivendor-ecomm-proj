@@ -43,7 +43,7 @@ const CreateProduct = () => {
   const [images, setImages] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("Computers and Laptops");
   const [tags, setTags] = useState("");
   const [originalPrice, setOriginalPrice] = useState(0);
   const [discountPrice, setDiscountPrice] = useState(0);
@@ -76,8 +76,7 @@ const CreateProduct = () => {
     newForm.append("originalPrice", originalPrice);
     newForm.append("discountPrice", discountPrice);
     newForm.append("stock", stock);
-    newForm.append("shopId", shop._id);
-    console.log(shop._id);
+    newForm.append("shop", shop._id);
 
     dispatch(createProduct(newForm));
   };

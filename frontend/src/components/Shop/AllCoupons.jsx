@@ -273,7 +273,31 @@ const AllCoupons = () => {
         Create Coupon Code
       </FancyButton>
       <DataGrid
-        style={{ color: "black" }}
+        sx={{
+          border: "1px solid black",
+          color: "#e0e0e0",
+          backgroundColor: "#1e1e1e",
+          "& .MuiDataGrid-columnHeader": {
+            backgroundColor: "#2a2a2a",
+            color: "#fff",
+            fontWeight: "bold",
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
+          },
+          "& .MuiDataGrid-footerContainer": {
+            backgroundColor: "#2a2a2a",
+            color: "#fff",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+          },
+          "& .MuiTablePagination-root": {
+            color: "#e0e0e0",
+          },
+          "& .MuiDataGrid-row:hover": {
+            backgroundColor: "rgba(255,255,255,0.08)",
+          },
+        }}
         rows={rows}
         columns={columns}
         pageSize={10}

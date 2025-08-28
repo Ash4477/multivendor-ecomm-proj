@@ -92,7 +92,7 @@ const CreateEvent = () => {
     newForm.append("originalPrice", originalPrice);
     newForm.append("discountPrice", discountPrice);
     newForm.append("stock", stock);
-    newForm.append("shopId", shop._id);
+    newForm.append("shop", shop._id);
     newForm.append("startDate", startDate.toISOString());
     newForm.append("endDate", endDate.toISOString());
 

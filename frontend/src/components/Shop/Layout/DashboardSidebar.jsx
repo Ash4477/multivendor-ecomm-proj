@@ -126,7 +126,7 @@ const tabs = [
   {
     id: 11,
     tabLink: (
-      <Link to="/dashboard/settings">
+      <Link to="/settings">
         <CiSettings size={20} /> Settings
       </Link>
     ),

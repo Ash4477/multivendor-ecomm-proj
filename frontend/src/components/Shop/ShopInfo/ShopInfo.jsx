@@ -1,13 +1,17 @@
 import axios from "axios";
 import styled from "styled-components";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { BACKEND_URL, SERVER_URL } from "../../../server";
 import {
   ImageDiv,
   Image,
   FancyButton as FB,
 } from "../../../styled-comps/commonComps";
+import Loader from "../../Layout/Loader/Loader";
+import { getAllShopProducts } from "../../../redux/actions/product";
 
 const Container = styled.div`
   flex: 1;
@@ -49,7 +53,13 @@ const FancyButton = styled(FB)`
 `;
 
 const ShopInfo = ({ isOwner, shop }) => {
+  const { products, loading } = useSelector((state) => state.product);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllShopProducts());
+  }, [dispatch]);
 
   const logoutHandler = () => {
     axios
@@ -64,6 +74,8 @@ const ShopInfo = ({ isOwner, shop }) => {
       });
   };
 
+  if (loading) return <Loader />;
+
   return (
     <Container>
       <HeaderDiv>
@@ -71,7 +83,7 @@ const ShopInfo = ({ isOwner, shop }) => {
           <Image $imgFill src={`${BACKEND_URL}/${shop?.avatar}`} />
         </ImageDiv>
         <h1>{shop.name}</h1>
-        <h2>{shop.description}</h2>
+        <p>{shop.description}</p>
       </HeaderDiv>
       <ContentDiv>
         <div>
@@ -80,19 +92,15 @@ const ShopInfo = ({ isOwner, shop }) => {
         </div>
         <div>
           <h3>Phone Number</h3>
-          <p>{shop.address}</p>
-        </div>
-        <div>
-          <h3>Phone Number</h3>
-          <p>+92-{shop.phoneNumber}</p>
+          <p>{shop.phoneNumber}</p>
         </div>
         <div>
           <h3>Total Products</h3>
-          <p>10</p>
+          <p>{products.length}</p>
         </div>
         <div>
           <h3>Shop Ratings</h3>
-          <p>4/5</p>
+          <p>{shop?.rating || "Not Rated Yet"}</p>
         </div>
         <div>
           <h3>Joined On</h3>
@@ -100,7 +108,9 @@ const ShopInfo = ({ isOwner, shop }) => {
         </div>
         {isOwner && (
           <div>
-            <FancyButton>Edit Shop</FancyButton>
+            <FancyButton onClick={() => navigate("/settings")}>
+              Edit Shop
+            </FancyButton>
             <FancyButton onClick={logoutHandler}>Logout</FancyButton>
           </div>
         )}

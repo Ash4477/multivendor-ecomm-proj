@@ -2,11 +2,15 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { FancyButton } from "../../../styled-comps/commonComps";
 import { useNavigate } from "react-router-dom";
+import { BACKEND_URL } from "../../../server";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllShopEvents } from "../../../redux/actions/events";
+import { getAllShopProducts } from "../../../redux/actions/product";
+import { ImageDiv, Image } from "../../../styled-comps/commonComps";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import EventCard from "../../Route/Events/EventCard";
 import ProductCard from "../../Route/ProductCard/ProductCard";
 import Loader from "../../Layout/Loader/Loader";
-import axios from "axios";
-import { SERVER_URL } from "../../../server";
-import { toast } from "react-toastify";
 
 const Container = styled.div`
   flex: 3;
@@ -16,12 +20,12 @@ const FlexDiv = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: ${({ $jc }) => $jc || undefined};
   gap: 1rem;
 `;
 
 const MainDiv = styled.div`
   overflow: auto;
-
   margin-top: 1rem;
   display: flex;
   flex-wrap: wrap;
@@ -38,25 +42,29 @@ const TabHeader = styled.h2`
     color: var(--color-1);
   `};
 `;
+const Col = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: ${({ $jc }) => $jc || "center"};
+  align-items: ${({ $ai }) => $ai || "start"};
+  gap: 0.5rem;
+`;
 
 const ShopProfileData = ({ isOwner, shopId }) => {
   const [activeTab, setActiveTab] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [products, setProducts] = useState([]);
+  const { products, loading } = useSelector((state) => state.product);
+  const { events, loading: loading2 } = useSelector((state) => state.event);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    setIsLoading(true);
-    axios
-      .get(`${SERVER_URL}/products/shop/${shopId}`)
-      .then((res) => {
-        setProducts(res.data.products);
-      })
-      .catch(() => toast.error("Server is down"))
-      .finally(() => setIsLoading(false));
-  }, [shopId]);
+    if (shopId) {
+      dispatch(getAllShopProducts(shopId));
+      dispatch(getAllShopEvents(shopId));
+    }
+  }, [shopId, dispatch]);
 
-  if (isLoading) return <Loader />;
+  if (loading || loading2) return <Loader />;
 
   return (
     <Container>
@@ -96,6 +104,64 @@ const ShopProfileData = ({ isOwner, shopId }) => {
           ) : (
             products.map((p, idx) => <ProductCard data={p} key={idx} />)
           )}
+        </MainDiv>
+      )}
+
+      {activeTab === 2 && (
+        <MainDiv>
+          {events.map((ev) => (
+            <EventCard data={ev} key={ev._id} />
+          ))}
+        </MainDiv>
+      )}
+
+      {activeTab === 3 && (
+        <MainDiv style={{ gap: 0 }}>
+          {products.map((product) => {
+            return product.reviews.map((rev, i) => (
+              <FlexDiv
+                $jc="start"
+                $ai="space-between"
+                key={i}
+                style={{
+                  width: "100%",
+                  gap: "1rem",
+                  borderTop: "1px solid grey",
+                  padding: "0.5rem 0",
+                }}
+              >
+                <Col $ai="center" style={{ minWidth: "80px" }}>
+                  <ImageDiv $rounded $width="50px" $height="50px">
+                    <Image
+                      src={`${BACKEND_URL}/${rev.user?.avatar}`}
+                      alt="user profile image"
+                    />
+                  </ImageDiv>
+                  <p>{rev.user?.name}</p>
+                </Col>
+                <Col style={{ flex: "1" }}>
+                  <FlexDiv $jc="start" style={{ gap: 0 }}>
+                    {[1, 2, 3, 4, 5].map((num, idx) =>
+                      num <= rev.rating ? (
+                        <AiFillStar
+                          key={idx}
+                          size={25}
+                          color="rgb(246,186,0)"
+                        />
+                      ) : (
+                        <AiOutlineStar
+                          key={idx}
+                          size={25}
+                          color="rgb(246,186,0)"
+                        />
+                      )
+                    )}
+                  </FlexDiv>
+                  <p>{rev.comment}</p>
+                </Col>
+              </FlexDiv>
+            ));
+          })}
         </MainDiv>
       )}
     </Container>

@@ -68,8 +68,6 @@ const AllProducts = () => {
       minWidth: 100,
       flex: 0.8,
       renderCell: (params) => {
-        const d = params.row.name;
-        const productName = d.replace(/\s+/g, "-");
         return (
           <div
             style={{
@@ -80,7 +78,7 @@ const AllProducts = () => {
               height: "100%",
             }}
           >
-            <Link to={`/product/${productName}`}>
+            <Link to={`/products/${params.row.id}`}>
               <AiOutlineEye size={20} />
             </Link>
           </div>
@@ -122,6 +120,31 @@ const AllProducts = () => {
   return (
     <Container>
       <DataGrid
+        sx={{
+          border: "1px solid black",
+          color: "#e0e0e0",
+          backgroundColor: "#1e1e1e",
+          "& .MuiDataGrid-columnHeader": {
+            backgroundColor: "#2a2a2a",
+            color: "#fff",
+            fontWeight: "bold",
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
+          },
+          "& .MuiDataGrid-footerContainer": {
+            backgroundColor: "#2a2a2a",
+            color: "#fff",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+          },
+          "& .MuiTablePagination-root": {
+            color: "#e0e0e0",
+          },
+          "& .MuiDataGrid-row:hover": {
+            backgroundColor: "rgba(255,255,255,0.08)",
+          },
+        }}
         rows={rows}
         columns={columns}
         pageSize={10}
