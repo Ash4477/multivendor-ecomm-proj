@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Image, ImageDiv } from "../../styled-comps/commonComps";
 import styled from "styled-components";
 import { BACKEND_URL } from "../../server";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
 const Container = styled.div`
   margin-top: 2rem;
@@ -12,8 +13,9 @@ const Container = styled.div`
 
 const FlexDiv = styled.div`
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: ${({ $jc }) => $jc || "space-around"};
+  align-items: ${({ $ai }) => $ai || "center"};
+  gap: 0.5rem;
 `;
 
 const TabText = styled.h3`
@@ -41,10 +43,17 @@ const FancyButton = styled.button`
   border-radius: 5px;
 `;
 
+const Col = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: ${({ $jc }) => $jc || "center"};
+  align-items: ${({ $ai }) => $ai || "start"};
+  gap: 0.5rem;
+`;
+
 const ProductDetailsInfo = ({ data }) => {
   const [activeTab, setActiveTab] = useState(1);
   const navigate = useNavigate();
-
   return (
     <Container>
       <FlexDiv>
@@ -60,48 +69,57 @@ const ProductDetailsInfo = ({ data }) => {
       </FlexDiv>
       {activeTab === 1 ? (
         <InnerDiv>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Optio,
-            consequuntur error voluptatibus quia itaque sed corrupti rerum
-            voluptate rem at vitae minima a dolore quis nemo. Nihil perferendis
-            tempora magni?Lorem ipsum dolor sit amet, consectetur adipisicing
-            elit. A odio tempora, voluptas vel, illum consequuntur quas dolores
-            esse adipisci magnam voluptatum magni tempore, nobis pariatur
-            necessitatibus soluta dolor non in. Lorem, ipsum dolor sit amet
-            consectetur adipisicing elit. Perferendis dolore vitae dolor. Nam
-            quidem velit aperiam, ex quis totam aliquid modi consequuntur
-            facilis nostrum a voluptates est praesentium. Expedita, eos.
-          </p>
-          <br />
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Optio,
-            consequuntur error voluptatibus quia itaque sed corrupti rerum
-            voluptate rem at vitae minima a dolore quis nemo. Nihil perferendis
-            tempora magni?Lorem ipsum dolor sit amet, consectetur adipisicing
-            elit. A odio tempora, voluptas vel, illum consequuntur quas dolores
-            esse adipisci magnam voluptatum magni tempore, nobis pariatur
-            necessitatibus soluta dolor non in. Lorem, ipsum dolor sit amet
-            consectetur adipisicing elit. Perferendis dolore vitae dolor. Nam
-            quidem velit aperiam, ex quis totam aliquid modi consequuntur
-            facilis nostrum a voluptates est praesentium. Expedita, eos.
-          </p>
-          <br />
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Optio,
-            consequuntur error voluptatibus quia itaque sed corrupti rerum
-            voluptate rem at vitae minima a dolore quis nemo. Nihil perferendis
-            tempora magni?Lorem ipsum dolor sit amet, consectetur adipisicing
-            elit. A odio tempora, voluptas vel, illum consequuntur quas dolores
-            esse adipisci magnam voluptatum magni tempore, nobis pariatur
-            necessitatibus soluta dolor non in. Lorem, ipsum dolor sit amet
-            consectetur adipisicing elit. Perferendis dolore vitae dolor. Nam
-            quidem velit aperiam, ex quis totam aliquid modi consequuntur
-            facilis nostrum a voluptates est praesentium. Expedita, eos.
-          </p>
+          <p>{data.description}</p>
         </InnerDiv>
       ) : activeTab === 2 ? (
         <InnerDiv>
-          <p>No reviews yet!</p>
+          {data.reviews && data.reviews.length === 0 ? (
+            <p>No reviews yet!</p>
+          ) : (
+            data.reviews.map((rev, i) => (
+              <FlexDiv
+                $jc="start"
+                $ai="space-between"
+                key={i}
+                style={{
+                  width: "100%",
+                  gap: "1rem",
+                  borderTop: "1px solid grey",
+                  padding: "0.5rem 0",
+                }}
+              >
+                <Col $ai="center" style={{ minWidth: "80px" }}>
+                  <ImageDiv $rounded $width="50px" $height="50px">
+                    <Image
+                      src={`${BACKEND_URL}/${rev.user?.avatar}`}
+                      alt="user profile image"
+                    />
+                  </ImageDiv>
+                  <p>{rev.user?.name}</p>
+                </Col>
+                <Col style={{ flex: "1" }}>
+                  <p>{rev.comment}</p>
+                  <FlexDiv $jc="start">
+                    {[1, 2, 3, 4, 5].map((num, idx) =>
+                      num <= rev.rating ? (
+                        <AiFillStar
+                          key={idx}
+                          size={25}
+                          color="rgb(246,186,0)"
+                        />
+                      ) : (
+                        <AiOutlineStar
+                          key={idx}
+                          size={25}
+                          color="rgb(246,186,0)"
+                        />
+                      )
+                    )}
+                  </FlexDiv>
+                </Col>
+              </FlexDiv>
+            ))
+          )}
         </InnerDiv>
       ) : (
         <FlexDiv
@@ -124,16 +142,14 @@ const ProductDetailsInfo = ({ data }) => {
                 <h4>{data.shop.name}</h4>
                 <h5>
                   {data.shop.ratings
-                    ? `(${data.shop.ratings}) Ratings`
+                    ? `(${data.shop.rating}) Ratings`
                     : "No Ratings Yet"}
                 </h5>
               </InnerDiv>
             </FlexDiv>
             <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti
-              perspiciatis dignissimos dolore velit possimus incidunt atque iste
-              repudiandae officia illo. Commodi dolor soluta, ex similique nobis
-              maiores odit necessitatibus ...
+              {data.shop.description ||
+                "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere, laboriosam! Dolor, eum. Molestias et porro animi ullam dolorum officia, totam hic corporis ducimus eaque ipsum voluptate veritatis eos, consequuntur perspiciatis!"}
             </p>
           </InnerDiv>
           <InnerDiv
@@ -149,12 +165,12 @@ const ProductDetailsInfo = ({ data }) => {
               <b>Joined on:</b> {data.shop.createdAt.slice(0, 10)}
             </p>
             <p>
-              <b>Total Products:</b> 1,221
+              <b>Total Products:</b> {data.shop.totalProducts}
             </p>
             <p>
-              <b>Total Reviews:</b> 131
+              <b>Total Reviews:</b> {data?.reviews.length || 0}
             </p>
-            <FancyButton onClick={() => navigate(`/shop/${data.shopId}`)}>
+            <FancyButton onClick={() => navigate(`/shop/${data.shop._id}`)}>
               Visit Shop
             </FancyButton>
           </InnerDiv>

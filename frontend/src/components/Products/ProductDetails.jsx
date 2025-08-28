@@ -8,8 +8,9 @@ import {
 } from "react-icons/ai";
 import styled from "styled-components";
 import PriceDiv from "../Route/PriceDiv/PriceDiv";
+import Countdown from "../Route/Events/Countdown";
 import ProductDetailsInfo from "./ProductDetailsInfo";
-import { BACKEND_URL } from "../../server";
+import { BACKEND_URL, SERVER_URL } from "../../server";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { addToCart } from "../../redux/actions/cart";
@@ -17,7 +18,8 @@ import {
   addToWishlist,
   removeFromWishlist,
 } from "../../redux/actions/wishlist";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Container = styled.div`
   padding: 2rem 3rem;
@@ -32,6 +34,7 @@ const FlexColDiv = styled.div`
 const FlexDiv = styled.div`
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   align-items: ${({ $align }) => ($align ? $align : "center")};
   justify-content: ${({ $justify }) => ($justify ? $justify : undefined)};
   gap: ${({ $gap }) => ($gap ? $gap : "1rem")};
@@ -98,12 +101,14 @@ const SubTitle2 = styled.h3`
   font-size: 0.8rem;
 `;
 
-const ProductDetails = ({ data }) => {
+const ProductDetails = ({ data, isEvent }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
   const { cart } = useSelector((state) => state.cart);
   const { wishlist } = useSelector((state) => state.wishlist);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data?.images[0]) {
@@ -113,7 +118,24 @@ const ProductDetails = ({ data }) => {
 
   const isInWishlist = wishlist.some((i) => i._id === data._id);
 
-  const handleMessageSubmit = () => {};
+  const handleMessageSubmit = () => {
+    if (isAuthenticated) {
+      axios
+        .post(`${SERVER_URL}/conversations`, {
+          groupId: data?._id + user?._id + data?.shop._id,
+          userId: user?._id,
+          shopId: data?.shop._id,
+        })
+        .then((res) => {
+          navigate(`/user/inbox/${res.data.conversation._id}`);
+        })
+        .catch((err) => {
+          toast.error(err.response?.data?.message || "Something went wrong");
+        });
+    } else {
+      toast.error("You need to login first");
+    }
+  };
 
   const addToCartHandler = (id, quantity) => {
     const isItemExist = cart && cart.find((i) => i._id === id);
@@ -156,7 +178,7 @@ const ProductDetails = ({ data }) => {
             {data.images.map((img, idx) => (
               <ImageDiv
                 key={idx}
-                $height="100px"
+                $height="50px"
                 style={{
                   border: `${
                     img === selectedImage
@@ -179,8 +201,11 @@ const ProductDetails = ({ data }) => {
           <h1>{data.name}</h1>
           <p>
             <BoldSpan>Description:</BoldSpan> <br />
-            {data.description.slice(0, 1000)} ... (full details below)
+            {data.description.slice(0, 500)} ... (full details below)
           </p>
+          {isEvent && (
+            <Countdown startDate={data.startDate} endDate={data.endDate} />
+          )}
           <PriceDiv
             discount_price={data.discountPrice}
             price={data.originalPrice}
@@ -229,7 +254,7 @@ const ProductDetails = ({ data }) => {
               Add to Cart <AiOutlineShoppingCart size={20} />
             </FancyButton>
             <FlexDiv style={{ width: "max-content" }}>
-              <Link to={`/shop/${data.shopId}`}>
+              <Link to={`/shop/${data.shop._id}`}>
                 <ImageDiv $height="50px" $width="50px" $rounded>
                   <Image
                     src={`${BACKEND_URL}/${data.shop.avatar}`}
@@ -240,7 +265,7 @@ const ProductDetails = ({ data }) => {
                 </ImageDiv>
               </Link>
               <FlexColDiv>
-                <Link to={`/shop/${data.shopId}`}>
+                <Link to={`/shop/${data.shop._id}`}>
                   <SubTitle>{data.shop.name}</SubTitle>{" "}
                 </Link>
                 {data.shop.ratings ? (
