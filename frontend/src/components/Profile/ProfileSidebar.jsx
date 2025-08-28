@@ -1,13 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { RxPerson } from "react-icons/rx";
 import { MdOutlineTrackChanges } from "react-icons/md";
+import { RiLockPasswordLine } from "react-icons/ri";
 import { TbAddressBook } from "react-icons/tb";
 import { HiOutlineReceiptRefund, HiOutlineShoppingBag } from "react-icons/hi";
-import {
-  AiOutlineCreditCard,
-  AiOutlineLogin,
-  AiOutlineMessage,
-} from "react-icons/ai";
+import { AiOutlineLogin, AiOutlineMessage } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { SERVER_URL } from "../../server";
 import styled from "styled-components";
@@ -56,8 +53,8 @@ const tabs = [
   },
   {
     id: 6,
-    tabName: "Payment Methods",
-    tabIcon: <AiOutlineCreditCard size={20} />,
+    tabName: "Change Password",
+    tabIcon: <RiLockPasswordLine size={20} />,
   },
   {
     id: 7,
@@ -95,8 +92,8 @@ const ProfileSidebar = ({ active, setActive }) => {
           $active={active === tab.id}
           onClick={tab.id === 8 ? logoutHandler : () => setActive(tab.id)}
         >
-          <p>{tab.tabName}</p>
           {tab.tabIcon}
+          <p>{tab.tabName}</p>
         </ListItem>
       ))}
     </Container>

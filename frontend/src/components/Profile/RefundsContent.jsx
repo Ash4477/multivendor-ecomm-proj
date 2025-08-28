@@ -61,7 +61,7 @@ const columns = [
   },
 ];
 
-const OrdersContent = () => {
+const RefundsContent = () => {
   const { user } = useSelector((state) => state.user);
   const { userOrders: orders } = useSelector((state) => state.order);
   const dispatch = useDispatch();
@@ -74,12 +74,14 @@ const OrdersContent = () => {
 
   orders &&
     orders.forEach((item) => {
-      row.push({
-        id: item._id,
-        totalItems: item.cart.reduce((acc, curr) => acc + curr.quantity, 0),
-        total: "$ " + item.totalPrice,
-        status: item.status,
-      });
+      if (item.status === "Processing Refund") {
+        row.push({
+          id: item._id,
+          totalItems: item.cart.reduce((acc, curr) => acc + curr.quantity, 0),
+          total: "$ " + item.totalPrice,
+          status: item.status,
+        });
+      }
     });
 
   return (
@@ -119,4 +121,4 @@ const OrdersContent = () => {
   );
 };
 
-export default OrdersContent;
+export default RefundsContent;

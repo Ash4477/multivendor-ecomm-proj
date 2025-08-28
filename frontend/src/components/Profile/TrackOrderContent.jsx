@@ -1,9 +1,12 @@
+import { MdOutlineTrackChanges } from "react-icons/md";
+import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
-import styled from "styled-components";
-import { MdOutlineTrackChanges } from "react-icons/md";
+import { getUserOrders } from "../../redux/actions/order";
 
 const Container = styled.div`
   display: "flex";
@@ -11,17 +14,9 @@ const Container = styled.div`
   margin-left: 1rem;
 `;
 
-const orders = [
-  {
-    _id: "4714134jjbjfbjaasjd123123",
-    orderItems: [{ name: "Iphone 14 pro max" }],
-    totalPrice: 120,
-    orderStatus: "Processing",
-  },
-];
-
 const columns = [
   { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
+
   {
     field: "status",
     headerName: "Status",
@@ -31,8 +26,8 @@ const columns = [
       params.row.status === "Delivered" ? "greenColor" : "redColor",
   },
   {
-    field: "itemsQty",
-    headerName: "Items Qty",
+    field: "totalItems",
+    headerName: "Total Items",
     type: "number",
     minWidth: 130,
     flex: 0.7,
@@ -49,14 +44,14 @@ const columns = [
   {
     field: "actions",
     flex: 1,
-    minWidth: 130,
+    minWidth: 150,
     headerName: "",
     type: "number",
     sortable: false,
     renderCell: (params) => {
       return (
         <>
-          <Link to={`/order/${params.id}`}>
+          <Link to={`/user/track/order/${params.id}`}>
             <Button>
               <MdOutlineTrackChanges size={20} />
             </Button>
@@ -67,22 +62,55 @@ const columns = [
   },
 ];
 
-const row = [];
-
-orders &&
-  orders.forEach((item) => {
-    row.push({
-      id: item._id,
-      itemsQty: item.orderItems.length,
-      total: "US$ " + item.totalPrice,
-      status: item.orderStatus,
-    });
-  });
-
 const TrackOrderContent = () => {
+  const { user } = useSelector((state) => state.user);
+  const { userOrders: orders } = useSelector((state) => state.order);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getUserOrders(user._id));
+  }, [dispatch, user]);
+
+  const row = [];
+
+  orders &&
+    orders.forEach((item) => {
+      row.push({
+        id: item._id,
+        totalItems: item.cart.reduce((acc, curr) => acc + curr.quantity, 0),
+        total: "$ " + item.totalPrice,
+        status: item.status,
+      });
+    });
+
   return (
     <Container>
       <DataGrid
+        sx={{
+          border: "1px solid black",
+          color: "#e0e0e0",
+          backgroundColor: "#1e1e1e",
+          "& .MuiDataGrid-columnHeader": {
+            backgroundColor: "#2a2a2a",
+            color: "#fff",
+            fontWeight: "bold",
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
+          },
+          "& .MuiDataGrid-footerContainer": {
+            backgroundColor: "#2a2a2a",
+            color: "#fff",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+          },
+          "& .MuiTablePagination-root": {
+            color: "#e0e0e0",
+          },
+          "& .MuiDataGrid-row:hover": {
+            backgroundColor: "rgba(255,255,255,0.08)",
+          },
+        }}
         rows={row}
         columns={columns}
         pageSize={10}

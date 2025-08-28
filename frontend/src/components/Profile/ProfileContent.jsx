@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Image, ImageDiv } from "../../styled-comps/commonComps";
 import {
   Input,
@@ -8,8 +8,12 @@ import {
   SubmitBtn,
 } from "../../styled-comps/formComps";
 import { AiOutlineCamera } from "react-icons/ai";
-import { BACKEND_URL } from "../../server";
+import { BACKEND_URL, SERVER_URL } from "../../server";
 import styled from "styled-components";
+import { loadUser, updateUserInfo } from "../../redux/actions/user";
+import Loader from "../Layout/Loader/Loader";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -22,6 +26,7 @@ const CamDiv = styled.div`
 `;
 
 const CamBtn = styled.button`
+  cursor: pointer;
   background-color: var(--color-5);
   color: black;
   border-radius: 50%;
@@ -43,94 +48,123 @@ const Label = styled(L)`
 `;
 
 const ProfileContent = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
   const { user, loading } = useSelector((state) => state.user);
+  const [name, setName] = useState(user.name || "");
+  const [email, setEmail] = useState(user.email || "");
+  const [contactNumber, setContactNumber] = useState(user.phoneNumber || "");
+  const [avatar, setAvatar] = useState(null);
+  const [password, setPassword] = useState("");
+  const [confPassword, setConfPassword] = useState("");
+  const dispatch = useDispatch();
 
   const handleUpdate = (e) => {
     e.preventDefault();
+    if (password !== confPassword) {
+      toast.error("Passwords don't match");
+      return;
+    }
+    const data = { name, email, phoneNumber: contactNumber, password };
+    dispatch(updateUserInfo(data));
+    dispatch(loadUser());
   };
 
-  if (loading) return <p>Loading...</p>;
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    setAvatar(file);
+
+    const formData = new FormData();
+    formData.append("image", e.target.files[0]);
+
+    axios
+      .put(`${SERVER_URL}/users/update-avatar`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      })
+      .then(() => {
+        toast.success("Profile Image Updated");
+        dispatch(loadUser());
+      })
+      .catch((error) => toast.error(error.response.data.message));
+  };
 
   return (
-    <>
-      <Container>
-        <CamDiv>
-          <ImageDiv
-            $width="150px"
-            $rounded
-            style={{
-              border: "3px solid var(--color-1)",
-            }}
-          >
-            <Image src={`${BACKEND_URL}/${user.avatar}`} alt="avatar" />
-          </ImageDiv>
-          <CamBtn>
+    <Container>
+      <CamDiv>
+        <ImageDiv
+          $width="150px"
+          $height="150px"
+          $rounded
+          style={{
+            border: "3px solid var(--color-1)",
+          }}
+        >
+          <Image src={`${BACKEND_URL}/${user.avatar}`} alt="avatar" />
+        </ImageDiv>
+        <CamBtn>
+          <label htmlFor="image">
             <AiOutlineCamera size={20} />
-          </CamBtn>
-        </CamDiv>
+          </label>
+          <input
+            type="file"
+            id="image"
+            style={{ display: "none" }}
+            onChange={handleImage}
+          />
+        </CamBtn>
+      </CamDiv>
 
-        <Form onSubmit={handleUpdate}>
-          <InputDiv>
-            <Label htmlFor="f-name">Full Name</Label>
-            <Input
-              id="f-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </InputDiv>
-          <InputDiv>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </InputDiv>
-          <InputDiv>
-            <Label htmlFor="contactNum">Contact Number</Label>
-            <Input
-              id="contactNum"
-              value={contactNumber}
-              onChange={(e) => setContactNumber(e.target.value)}
-            />
-          </InputDiv>
-          <InputDiv>
-            <Label htmlFor="zipCode">Zip Code</Label>
-            <Input
-              id="zipCode"
-              value={zipCode}
-              onChange={(e) => setZipCode(e.target.value)}
-              $width="100%"
-            />
-          </InputDiv>
-          <InputDiv>
-            <Label htmlFor="address1">Address 1</Label>
-            <Input
-              id="address1"
-              value={address1}
-              onChange={(e) => setAddress1(e.target.value)}
-            />
-          </InputDiv>
-          <InputDiv>
-            <Label htmlFor="address2">Address 2</Label>
-            <Input
-              id="address2"
-              value={address2}
-              onChange={(e) => setAddress2(e.target.value)}
-            />
-          </InputDiv>
-          <SubmitBtn type="submit" style={{ gridColumn: "1/-1" }}>
-            Update
-          </SubmitBtn>
-        </Form>
-      </Container>
-    </>
+      <Form onSubmit={handleUpdate}>
+        <InputDiv>
+          <Label htmlFor="f-name">Full Name</Label>
+          <Input
+            id="f-name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </InputDiv>
+        <InputDiv>
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </InputDiv>
+        <InputDiv>
+          <Label htmlFor="contactNum">Contact Number</Label>
+          <Input
+            id="contactNum"
+            type="number"
+            value={contactNumber}
+            onChange={(e) => setContactNumber(e.target.value)}
+          />
+        </InputDiv>
+        <br />
+        <InputDiv>
+          <Label htmlFor="pass">Enter Password</Label>
+          <Input
+            id="pass"
+            value={password}
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </InputDiv>
+        <InputDiv>
+          <Label htmlFor="pass-conf">Re-Enter Password</Label>
+          <Input
+            id="pass-conf"
+            value={confPassword}
+            type="password"
+            onChange={(e) => setConfPassword(e.target.value)}
+          />
+        </InputDiv>
+        <SubmitBtn type="submit" style={{ gridColumn: "1/-1" }}>
+          {loading ? <Loader /> : "Update"}
+        </SubmitBtn>
+      </Form>
+    </Container>
   );
 };
 
