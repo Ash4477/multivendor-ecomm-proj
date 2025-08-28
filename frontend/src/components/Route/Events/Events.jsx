@@ -20,7 +20,9 @@ const Events = () => {
     axios
       .get(`${SERVER_URL}/events?limit=1`)
       .then((res) => setData(res.data.events))
-      .catch(() => toast.error("Server down"))
+      .catch((err) =>
+        toast.error(err?.response?.data?.message || "Server down")
+      )
       .finally(() => setIsLoading(false));
   }, []);
 

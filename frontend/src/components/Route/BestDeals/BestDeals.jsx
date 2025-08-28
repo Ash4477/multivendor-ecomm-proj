@@ -8,8 +8,8 @@ const Container = styled.div`
 const ItemsDiv = styled.div`
   margin: 1rem 0;
   display: grid;
-  grid-template-rows: 1fr;
-  grid-auto-flow: column;
+  grid-template-rows: repeat(auto, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   overflow-x: auto;
   gap: 1rem;
 `;

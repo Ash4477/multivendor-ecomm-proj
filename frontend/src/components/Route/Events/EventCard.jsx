@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { Image, ImageDiv } from "../../../styled-comps/commonComps";
 import PriceDiv from "../PriceDiv/PriceDiv";
-import Countdonwn from "./Countdown";
+import Countdown from "./Countdown";
 import styled from "styled-components";
 import { BACKEND_URL, SERVER_URL } from "../../../server";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { addToCart } from "../../../redux/actions/cart";
 
 const Container = styled.div`
   margin: 1rem 0;
@@ -33,6 +36,20 @@ const FancyButton = styled.button`
 `;
 
 const EventCard = ({ data }) => {
+  const { cart } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+
+  const addToCartHandler = () => {
+    const isItemExist = cart && cart.find((i) => i._id === data._id);
+    if (isItemExist) {
+      toast.info("Item already in cart");
+      return;
+    }
+    const cartData = { ...data, quantity: 1 };
+    dispatch(addToCart(cartData));
+    toast.success("Item added to cart successfully");
+  };
+
   return (
     <Container>
       <ImageDiv style={{ flex: "1" }}>
@@ -47,13 +64,15 @@ const EventCard = ({ data }) => {
           total_sell={data.sold_out}
           fontSize={"2rem"}
         />
-        <Countdonwn />
+        <Countdown startDate={data.startDate} endDate={data.endDate} />
         <FlexDiv
           style={{ alignItems: "center", justifyContent: "space-between" }}
         >
           <FlexDiv>
-            <FancyButton>See Details</FancyButton>
-            <FancyButton>Buy Now </FancyButton>
+            <FancyButton>
+              <Link to={`/events/${data._id}`}>See Details</Link>
+            </FancyButton>
+            <FancyButton onClick={addToCartHandler}>Buy Now</FancyButton>
           </FlexDiv>
           <Link to="/events" style={{ fontWeight: "bold" }}>
             See More Events -&gt;

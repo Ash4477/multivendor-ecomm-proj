@@ -5,6 +5,7 @@ import { Image, ImageDiv } from "../../../styled-comps/commonComps";
 import {
   AiFillHeart,
   AiFillStar,
+  AiOutlineStar,
   AiOutlineEye,
   AiOutlineHeart,
   AiOutlineShoppingCart,
@@ -34,6 +35,8 @@ const Container = styled.div`
 `;
 
 const Title = styled.h3`
+  min-height: 40px;
+  width: 100%;
   font-size: 0.9rem;
   font-weight: normal;
 `;
@@ -41,8 +44,8 @@ const Title = styled.h3`
 const StarsDiv = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.2rem;
 `;
+
 const OptionsDiv = styled.div`
   background-color: var(--color-4);
   color: white;
@@ -107,11 +110,17 @@ const ProductCard = ({ data }) => {
         </Title>
       </Link>
       <StarsDiv>
-        <AiFillStar color="#ffce08" size={20} />
-        <AiFillStar color="#ffce08" size={20} />
-        <AiFillStar color="#ffce08" size={20} />
-        <AiFillStar size={20} />
-        <AiFillStar size={20} />
+        {data.rating ? (
+          [1, 2, 3, 4, 5].map((num, idx) =>
+            num <= data.rating ? (
+              <AiFillStar key={idx} size={25} color="rgb(246,186,0)" />
+            ) : (
+              <AiOutlineStar key={idx} size={25} color="rgb(246,186,0)" />
+            )
+          )
+        ) : (
+          <p style={{ fontFamily: "Roboto" }}>(Not Rated Yet)</p>
+        )}
       </StarsDiv>
       <PriceDiv
         discount_price={data.discountPrice}
