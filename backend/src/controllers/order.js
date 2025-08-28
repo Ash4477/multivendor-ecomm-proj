@@ -15,7 +15,7 @@ router.post(
   "/",
   isUserAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
-    const { cart, shippingAddress, totalPrice, paymentInfo } = req.body;
+    const { cart, shippingAddress, discount, paymentInfo } = req.body;
 
     const shopItemsMap = new Map();
 
@@ -32,7 +32,9 @@ router.post(
       const order = await Order.create({
         cart: items,
         shippingAddress,
-        totalPrice,
+        totalPrice:
+          items.reduce((acc, item) => (acc += item.discountPrice), 0) -
+          discount,
         paymentInfo,
         user: req.user._id,
       });

@@ -41,17 +41,14 @@ router.post(
 router.get(
   "/shop/:id",
   catchAsyncErrors(async (req, res, next) => {
-    try {
-      const products = await Product.find({ shopId: req.params.id })
-        .populate("shop")
-        .populate("reviews.user", "name avatar");
-      res.status(200).json({
-        success: true,
-        products,
-      });
-    } catch (error) {
-      next(new ErrorHandler(error, 500));
-    }
+    const products = await Product.find({ shop: req.params.id })
+      .populate("shop")
+      .populate("reviews.user", "name avatar");
+
+    res.status(200).json({
+      success: true,
+      products,
+    });
   })
 );
 

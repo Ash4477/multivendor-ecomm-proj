@@ -35,9 +35,7 @@ router.get(
   "/shop/:id",
   catchAsyncErrors(async (req, res, next) => {
     try {
-      const events = await Event.find({ shopId: req.params.id }).populate(
-        "shop"
-      );
+      const events = await Event.find({ shop: req.params.id }).populate("shop");
 
       res.status(200).json({
         success: true,
