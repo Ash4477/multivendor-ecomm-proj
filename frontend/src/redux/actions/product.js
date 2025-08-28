@@ -33,6 +33,7 @@ const createProduct = (newForm) => async (dispatch) => {
 };
 
 const getAllShopProducts = (id) => async (dispatch) => {
+  if (!id) return;
   try {
     dispatch(getAllShopProductsRequest());
     const { data } = await axios.get(`${SERVER_URL}/products/shop/${id}`);
