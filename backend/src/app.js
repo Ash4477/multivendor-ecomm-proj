@@ -4,6 +4,14 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import errorHandler from "./middlewares/error.js";
 import userRouter from "./controllers/user.js";
+import shopRouter from "./controllers/shop.js";
+import productRouter from "./controllers/product.js";
+import couponCodeRouter from "./controllers/couponCode.js";
+import eventRouter from "./controllers/event.js";
+import paymentsRouter from "./controllers/payment.js";
+import ordersRouter from "./controllers/order.js";
+import conversationsRouter from "./controllers/conversation.js";
+import messagesRouter from "./controllers/message.js";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -30,6 +38,14 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 
 //routes
 app.use("/api/users", userRouter);
+app.use("/api/shops", shopRouter);
+app.use("/api/products", productRouter);
+app.use("/api/events", eventRouter);
+app.use("/api/coupons", couponCodeRouter);
+app.use("/api/payments", paymentsRouter);
+app.use("/api/orders", ordersRouter);
+app.use("/api/conversations", conversationsRouter);
+app.use("/api/messages", messagesRouter);
 
 app.use(errorHandler);
 
