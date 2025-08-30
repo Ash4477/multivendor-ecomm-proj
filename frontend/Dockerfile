@@ -1,18 +1,22 @@
-# Use Node.js image
-FROM node:20-alpine
+# Stage 1: Build React app
+FROM node:20-alpine as build
 
-# Set working directory
 WORKDIR /app
-
-# Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the code
 COPY . .
 
-# Build React app
+# Increase memory limit to 4GB for the build step
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 RUN npm run build
 
-# Default command (optional, just prevents container from exiting)
-CMD ["sh", "-c", "echo Build complete && tail -f /dev/null"]
+# Stage 2: Use plain Node.js (no Nginx for now)
+FROM node:20-alpine
+
+WORKDIR /app
+COPY --from=build /app/dist ./dist
+
+EXPOSE 3000
+CMD ["npx", "serve", "dist"]
